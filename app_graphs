@@ -461,10 +461,11 @@ class Planificador(Frame):
 
 		if Var56.get() ==1:
 			plt.figure()
-			plt.hist([rms], label=["RMS"])
+			plt.hist([rms], label=["RMS"], log=True)
 			plt.title(u"Histograma Valores de RMS")
 			plt.xlabel("RMS")
 			plt.ylabel(u'Número de sismos')
+			plt.grid(True, which="both", axis="y")
 			plt.legend();
 			plt.savefig("rms_sismos.png")
 
@@ -479,10 +480,11 @@ class Planificador(Frame):
 
 		if Var58a.get() ==1:
 			plt.figure()
-			plt.hist([error_lat, error_lon, error_prof], label=["Latitud", "Longitud", "Profundidad"])
+			plt.hist([error_lat, error_lon, error_prof], label=["Latitud", "Longitud", "Profundidad"], log=True)
 			plt.title(u"Errores En Localización")
 			plt.xlabel("Error (km)")
 			plt.ylabel(u'Número de sismos')
+			plt.grid(True, which="both", axis="y")
 			plt.legend();
 			plt.savefig("loc_err.png")
 

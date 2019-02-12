@@ -20,7 +20,7 @@ cur.execute("\
 		FROM \
 			Network left join Station on Network._oid=Station._parent_oid left join SensorLocation on Station._oid=SensorLocation._parent_oid left join Stream on SensorLocation._oid=Stream._parent_oid inner join DiskAvailability on Stream._oid = DiskAvailability.stream_oid \
 		WHERE \
-			DiskAvailability.date BETWEEN '20180301' AND '20180401000000' \
+			DiskAvailability.date BETWEEN '20181001' AND '20181101000000' \
 			AND (Network.code = 'CM') \
 			/*AND Station.code = 'HEL' */\
 			AND (Stream.code LIKE '%Z') \

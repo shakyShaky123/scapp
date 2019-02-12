@@ -3,7 +3,7 @@
 import sys
 import os
 
-def sc_time(report):
+def sc_time(report="sc_report.out"):
 	year = str
 	month = str
 	day = str
@@ -27,3 +27,6 @@ def sc_time(report):
 	archivo2 = open('time_sc.out', "w")
 	archivo2.write(contenido)
 	archivo2.close()
+
+if __name__ == '__main__':
+	sc_time()

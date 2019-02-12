@@ -63,7 +63,7 @@ class Planificador(Frame):
 	self.v3.set('CM'), self.Var3.set('1'), self.v5.set('%Z'), self.v5_1.set('00,20,40'), self.Var6.set('1'), self.Var6_1.set('1')
 
 	self.v8 = StringVar()
-	self.v8.set('porc_fun.jpg')
+	self.v8.set('porc_fun.png')
 
 	self.texto = Label(self.frameOne, height='3', text = "FUNCIONAMIENTO ", justify="center")
         self.texto.grid(row=0, column=3)
@@ -392,11 +392,15 @@ class Planificador(Frame):
 							cond = 1
 						if str(campo[1:6]) == "'EZNC":
 							cond = 1
-						if str(campo[1:6]) == "'HI4C":
+						if str(campo[1:4]) == "'HI":
 							cond = 1
-						if str(campo[1:6]) == "'HI5C":
+						if str(campo[1:6]) == "'DRL0":
 							cond = 1
-						if str(campo[1:6]) == "'HI4C":
+						if str(campo[1:6]) == "'MARO":
+							cond = 1
+						if str(campo[1:6]) == "'TOLC":
+							cond = 1
+						if str(campo[1:6]) == "'SOTO":
 							cond = 1
 						if str(campo[1:4]) == "'LL":
 							cond = 1

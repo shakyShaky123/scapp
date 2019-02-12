@@ -34,6 +34,10 @@ lat_errors = []
 lon_errors = []
 depth_errors = []
 
+errors_lat = []
+errors_lon = []
+errors_depth = []
+
 fecha_hora = []
 
 repetidos = []
@@ -85,6 +89,24 @@ for line in lines:
 		rms = float(c[6].strip())
 		if rms > 2.0:
 			list_rms.append(" ".join(c[-2:])+" "+str(rms))
+
+
+	if e_lat != "None":
+		rms = float(c[1].strip())
+		if rms > 12.0:
+			errors_lat.append(" ".join(c[-2:])+" "+str(rms))
+
+
+	if e_lon != "None":
+		rms = float(c[3].strip())
+		if rms > 12.0:
+			errors_lon.append(" ".join(c[-2:])+" "+str(rms))
+
+
+	if e_prof != "None":
+		rms = float(c[5].strip())
+		if rms > 12.0:
+			errors_depth.append(" ".join(c[-2:])+" "+str(rms))
 
 	i = 0
 	for campo in campos:
@@ -152,25 +174,19 @@ for i in range(0, len(fecha_hora)):
 contenido1 += "Eventos con magnitud mayor o igual a 3.5\n"
 for i in range(0, len(list_mag)):
 	contenido1 += list_mag[i]+'\n'
-contenido1 += "Eventos con errores en latitud mayor a 12 km\n"
-#for i in range(0, len(list2_lat)):
-#	contenido1 += list2_lat[i]+'\n'
-for i in range(0, len(lat_errors)):
-	contenido1 += lat_errors[i]+'\n'
-contenido1 += "Eventos con errores en longitud mayor a 12 km\n"
-#for i in range(0, len(list2_lon)):
-#	contenido1 += list2_lon[i]+'\n'
-for i in range(0, len(lon_errors)):
-	contenido1 += lon_errors[i]+'\n'
-contenido1 += "Eventos con errores en profundidad mayor a 12 km\n"
-#for i in range(0, len(list2_prof)):
-#	contenido1 += list2_prof[i]+'\n'
-for i in range(0, len(depth_errors)):
-	contenido1 += depth_errors[i]+'\n'
+contenido1 += "\n\nEventos con errores en latitud mayor a 12 km\n'Fecha         hora     error\n"
+for i in range(0, len(errors_lat)):
+	contenido1 += errors_lat[i]+'\n'
+contenido1 += "\nEventos con errores en longitud mayor a 12 km\n'Fecha         hora     error\n"
+for i in range(0, len(errors_lon)):
+	contenido1 += errors_lon[i]+'\n'
+contenido1 += "\nEventos con errores en profundidad mayor a 12 km\n'Fecha         hora     error\n"
+for i in range(0, len(errors_depth)):
+	contenido1 += errors_depth[i]+'\n'
 contenido1 += "\nEventos con rms mayor a 2.0s\n'Fecha         hora     rms\n"
 for i in range(0, len(list_rms)):
 	contenido1 += list_rms[i]+'\n'
-contenido1 += "Eventos posiblemente repetidos\n"
+contenido1 += "\n\nEventos posiblemente repetidos\n"
 for i in range(0, len(repetidos)):
 	contenido1 += repetidos[i]+'\n'
 contenido1 += "Eventos con epicentro en el pacifico\n"

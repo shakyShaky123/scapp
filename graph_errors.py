@@ -37,7 +37,6 @@ def location_error_graphics(e_lat, e_lon, e_pro, show=False):
 	plt.grid(True, which="both")
 	plt.legend();
 	plt.savefig("loc_err.png")
-	plt.show()
 	
 	if show: plt.show()
 
