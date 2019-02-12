@@ -32,7 +32,7 @@ cur.execute("\
 			DATE_FORMAT(Origin._last_modified, '%Y/%m/%d %H:%i:%S') AS 'MODIF', \
 			EventDescription.text AS 'Region' \
 		FROM \
-			Event, PublicObject AS PEvent, EventDescription, Origin, PublicObject AS POrigin, Magnitude, PublicObject AS PMagnitude, Comment \
+			Event, PublicObject AS PEvent, EventDescription, Origin, PublicObject AS POrigin, Magnitude, PublicObject AS PMagnitude \
 		WHERE \
 			Origin._oid=POrigin._oid \
 			AND Event._oid=PEvent._oid \
@@ -45,9 +45,9 @@ cur.execute("\
 			AND Event._oid=EventDescription._parent_oid \
 			/*AND Event._oid = FeltReport._oid */\
 			/*AND FeltReport.report NOT LIKE '' */\
-			AND Comment._parent_oid = Event._oid \
-			AND Comment.text LIKE '%DESTACADO%' \
-			AND Origin.time_value BETWEEN '20180301' AND '20180401000000'\
+			/*AND Comment._parent_oid = Event._oid */\
+			/*AND Comment.text LIKE '%DESTACADO%' */\
+			AND Origin.time_value BETWEEN '20181001' AND '20181101000000'\
 			/*AND ROUND(Origin.latitude_value,2) BETWEEN 7.0 AND 8.0 */\
 			/*AND ROUND(Origin.longitude_value,2) BETWEEN -82.0 AND -81.0 */\
 			/*AND Origin.depth_value BETWEEN 0 AND 10 */\
@@ -65,7 +65,7 @@ cur.execute("\
 			/*AND Origin.creationInfo_agencyID='SGC' */\
 			/*AND Origin.creationInfo_author='scanloc' */\
 			AND (Event.type NOT IN ('not locatable', 'explosion', 'not existing', 'outside of network interest') OR Event.type IS NULL)\
-			AND EventDescription.type = 'region name' AND (EventDescription.text LIKE '%Pacífico%' OR EventDescription.text LIKE '%Colombia%' OR EventDescription.text LIKE '%Caribe%' OR EventDescription.text LIKE '%Volcán%')\
+			AND EventDescription.type = 'region name' AND (EventDescription.text LIKE '%Pacífico%' OR EventDescription.text LIKE '%Colombia%' OR EventDescription.text LIKE '%Caribe%' OR EventDescription.text LIKE '%Caribbean%' OR EventDescription.text LIKE '%Volcán%')\
 			ORDER BY Origin.time_value")
 i=0
 contenido1 = ''
@@ -84,8 +84,8 @@ db.close()
 
 #SERVIDOR,232
 #BUSQUEDA,Eventos
-#TIME_INI,20180301
-#TIME_END,20180401000000
+#TIME_INI,20181001
+#TIME_END,20181101000000
 #LAT_MIN,
 #LAT_MAX,
 #LON_MIN,

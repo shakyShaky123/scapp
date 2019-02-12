@@ -736,7 +736,7 @@ class Planificador(Frame):
 				if self.Var31.get() == 1:
 						print self.v31.get()
 						if self.v31.get() == 'Boletin':
-							contenido1 +="			AND EventDescription.type = 'region name' AND (EventDescription.text LIKE '%"+self.v31_fix.get()+"%' OR EventDescription.text LIKE '%Colombia%' OR EventDescription.text LIKE '%Caribe%' OR EventDescription.text LIKE '%"+self.v31_fix2.get()+"%')\\\n"	
+							contenido1 +="			AND EventDescription.type = 'region name' AND (EventDescription.text LIKE '%"+self.v31_fix.get()+"%' OR EventDescription.text LIKE '%Colombia%' OR EventDescription.text LIKE '%Caribe%' OR EventDescription.text LIKE '%Caribbean%' OR EventDescription.text LIKE '%"+self.v31_fix2.get()+"%')\\\n"	
 						else:
 							contenido1 +="			AND EventDescription.type = 'region name' AND EventDescription.text LIKE '%"+self.v31.get()+"%' \\\n"
 				else:
