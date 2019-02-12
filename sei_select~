@@ -1,0 +1,979 @@
+#!/usr/bin/env python
+from Tkinter import *
+import tkFileDialog
+import datetime
+import tkMessageBox
+import Tkinter
+import sys
+import os
+import subprocess
+import os, time, math, tempfile
+import numpy 
+from glob import glob
+from time import *
+from datetime import *
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib import cm
+
+#ruta = "/home/camilo/Backup_208/camilo/read_select.208/V3_codigo/"
+#ruta = "/home/camilo/TEMP/scapp/"
+ruta = "/Rutinas.Seiscomp/scapp/"
+#ruta = "/home/camilo/scapp/"
+
+try:
+    import Gnuplot, Gnuplot.PlotItems, Gnuplot.funcutils
+except ImportError:
+    # kludge in case Gnuplot hasn't been installed as a module yet:
+    import __init__
+    Gnuplot = __init__
+    import PlotItems
+    Gnuplot.PlotItems = PlotItems
+    import funcutils
+    Gnuplot.funcutils = funcutils
+
+
+class Planificador(Frame):
+    def __init__(self,master):
+        Frame.__init__(self, master)
+        self.master = master
+        self.initUI()
+
+    def initUI(self):
+        self.master.title("Select")
+        self.frameOne = Frame(self.master)
+        self.frameOne.grid(row=0,column=0)
+        self.frameTwo = Frame(self.master)
+        self.frameTwo.grid(row=1, column=0)
+	
+	#parametros=glob("/home/Cmunoz/read_select/select.inp")
+	#archivo=open(parametros[0],"r")
+	##print "Nombre del archivo : ", archivo.name
+	##print "Cerrado o no : ", archivo.closed
+	##print "Modo de apertura : ", archivo.mode
+	#lines=archivo.readlines()
+	##print (lines[0])
+	#contenido = ''
+	
+	self.menu_inicial()
+	
+############################Ventana Inicial####################################
+
+    def menu_inicial(self):
+	
+	self.Var_V2_1=IntVar()
+
+	self.frameTwo.destroy()
+	self.frameOne=Toplevel()
+	self.select = Button(self.frameOne,text="Cargar select.inp", command=self.ir_select,width=18)
+	self.select.grid(row=1, column=0, pady=(5,5))
+	
+	self.textopieza = Label(self.frameOne, text = "Cargar Busqueda Anterior", justify="left")
+        self.textopieza.grid(row=3, column=0)
+	self.check = Checkbutton(self.frameOne, variable = self.Var_V2_1, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=4, column=0)
+	self.salir2=Button(self.frameOne, text='Menu', command=self.quit)
+	self.salir2.grid(row=5, column=4, padx=(5,5))
+	   
+   
+
+##########################################NUEVO SELECT SEISAN###################################
+
+    def ir_select(self):
+        #self.frameOne.grid_remove()
+	self.frameOne.destroy()
+	self.frameTwo=Toplevel()
+	self.texto = Label(self.frameTwo, height='3', text = "NUEVO SELECT\n", justify="center")
+        self.texto.grid(row=0, column=3)
+	
+	self.v1 = StringVar()
+	self.v2 = StringVar()
+	self.v3 = StringVar()
+	self.v4 = StringVar()
+	self.v5 = StringVar()
+	self.v6 = StringVar()
+	self.v7 = StringVar()
+	self.v8 = StringVar()
+	self.v9 = StringVar()
+	self.v10 = StringVar()
+	self.v11 = StringVar()
+	self.v12 = StringVar()
+	self.v13 = StringVar()
+	self.v14 = StringVar()
+	self.v15 = StringVar()
+	self.v16 = StringVar()
+	self.v17 = StringVar()
+	self.v18 = StringVar()
+	self.v19 = StringVar()
+	self.v20 = StringVar()
+	self.v21 = StringVar()
+	self.v22 = StringVar()
+	self.v23 = StringVar()
+	self.v24 = StringVar()
+	self.v25 = StringVar()
+	self.v26 = StringVar()
+	self.v27 = StringVar()
+	self.v28 = StringVar()
+	self.v29 = StringVar()
+	self.v30 = StringVar()
+	self.v31 = StringVar()
+	self.v32 = StringVar()
+	self.v33 = StringVar()
+	self.v34 = StringVar()
+	self.v35 = StringVar()
+
+	Var1 = IntVar()
+	Var2 = IntVar()
+	self.Var3 = IntVar()
+	Var4 = IntVar()
+	Var5 = IntVar()
+	Var6 = IntVar()
+	self.Var7 = IntVar()
+	self.Var8 = IntVar()
+	self.Var9 = IntVar()
+	self.Var10 = IntVar()
+	Var11 = IntVar()
+	Var12 = IntVar()
+	Var13 = IntVar()
+	Var14 = IntVar()
+	Var15 = IntVar()
+	Var16 = IntVar()
+	Var17 = IntVar()
+	Var18 = IntVar()
+	Var19 = IntVar()
+	Var20 = IntVar()
+	Var21 = IntVar()
+	Var22 = IntVar()
+	Var23 = IntVar()
+	Var24 = IntVar()
+	Var25 = IntVar()
+	Var26 = IntVar()
+	Var27 = IntVar()
+	Var28 = IntVar()
+	Var29 = IntVar()
+	Var30 = IntVar()
+	Var31 = IntVar()
+	Var32 = IntVar()
+    	Var33 = IntVar()
+	Var34 = IntVar()
+	Var35 = IntVar()
+ 	
+##################################Ventana del select################################
+	if self.Var_V2_1.get() == 0:
+		os.system("cp "+ruta+"select_inp_estandar/select.inp "+ruta)
+	def var_states():
+	   print("Base de Datos: %d,\nTipo: %d,\nTiempo Inicial: %d,\nTiempo Final: %d," % (Var1.get(), Var2.get(), self.Var3.get(), Var4.get()))
+	
+	def select():
+	   os.system("/bd/seismo/PRO/select "+ruta+"select.inp")
+	def inp():
+	   os.system("nano "+ruta+"select.inp ")
+	
+
+
+	self.check = Checkbutton(self.frameTwo, variable = Var1, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=14, column=0)
+	self.check = Checkbutton(self.frameTwo, variable = Var2, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=15, column=0)
+	self.check = Checkbutton(self.frameTwo, variable = self.Var3, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=16, column=0)
+	self.check = Checkbutton(self.frameTwo, variable = Var4, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=17, column=0)
+	
+	
+	self.textopieza = Label(self.frameTwo, text = "Base de Datos", justify="left")
+        self.textopieza.grid(row=14, column=1)
+	self.textopieza = Label(self.frameTwo, text = "Tipo", justify="left")
+        self.textopieza.grid(row=15, column=1)
+	self.textopieza = Label(self.frameTwo, text = "Tiempo Inicial", justify="left")
+        self.textopieza.grid(row=16, column=1)
+	self.textopieza = Label(self.frameTwo, text = "Tiempo Final", justify="left")
+        self.textopieza.grid(row=17, column=1)
+
+
+	
+	self.check = Checkbutton(self.frameTwo, variable = Var5, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=1, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var6, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=2, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = self.Var7, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=3, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = self.Var8, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=4, column=3)
+	
+	self.check = Checkbutton(self.frameTwo, variable = self.Var9, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=5, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = self.Var10, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=6, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var11, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=7, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var12, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=8, column=3)
+	
+	self.check = Checkbutton(self.frameTwo, variable = Var13, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=9, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var14, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=10, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var15, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=11, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var16, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=12, column=3)
+	
+	self.check = Checkbutton(self.frameTwo, variable = Var17, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=13, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var18, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=14, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var19, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=15, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var20, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=16, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var21, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=17, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var22, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=18, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var23, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=19, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var24, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=20, column=3)
+	
+	self.check = Checkbutton(self.frameTwo, variable = Var25, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=21, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var26, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=22, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var27, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=23, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var28, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=24, column=3)
+	
+	self.check = Checkbutton(self.frameTwo, variable = Var29, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=25, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var30, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=26, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var31, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=27, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var32, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=28, column=3)
+	
+	self.check = Checkbutton(self.frameTwo, variable = Var33, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=29, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var34, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=30, column=3)
+	self.check = Checkbutton(self.frameTwo, variable = Var35, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=31, column=3)
+
+
+	
+	self.textopieza = Label(self.frameTwo, text = "Minimo Numero de Estaciones", justify="left")
+        self.textopieza.grid(row=1, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Maximo Numero de Estaciones", justify="left")
+        self.textopieza.grid(row=2, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Latitud Minima", justify="left")
+        self.textopieza.grid(row=3, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Latitud Maxima", justify="left")
+        self.textopieza.grid(row=4, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Longitud Minima", justify="left")
+        self.textopieza.grid(row=5, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Longitud Maxima", justify="left")
+        self.textopieza.grid(row=6, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Magnitud Minima", justify="left")
+        self.textopieza.grid(row=7, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Magnitud Maxima", justify="left")
+        self.textopieza.grid(row=8, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Agencias Magnitiud", justify="left")
+        self.textopieza.grid(row=9, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Agencias Localizacion", justify="left")
+        self.textopieza.grid(row=10, column=4)
+	self.textopieza = Label(self.frameTwo, text = "rms Minimo", justify="left")
+        self.textopieza.grid(row=11, column=4)
+	self.textopieza = Label(self.frameTwo, text = "rms Maximo", justify="left")
+        self.textopieza.grid(row=12, column=4)
+	self.textopieza = Label(self.frameTwo, text = " Minima", justify="left")
+        self.textopieza.grid(row=13, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Profundidad Maxima", justify="left")
+        self.textopieza.grid(row=14, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Error en Latitud Minimo", justify="left")
+        self.textopieza.grid(row=15, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Error en Latitud Maximo", justify="left")
+        self.textopieza.grid(row=16, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Error en Longitud Minimo", justify="left")
+        self.textopieza.grid(row=17, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Error en Longitud Maximo", justify="left")
+        self.textopieza.grid(row=18, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Error en Profundidad Minimo", justify="left")
+        self.textopieza.grid(row=19, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Error en Profundidad Maximo", justify="left")
+        self.textopieza.grid(row=20, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Tipo de Magnitud", justify="left")
+        self.textopieza.grid(row=21, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Distancia (ID)", justify="left")
+	self.textopieza = Label(self.frameTwo, text = "Tipo de Evento", justify="left")
+        self.textopieza.grid(row=23, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Minimo Numero de polaridades", justify="left")
+        self.textopieza.grid(row=24, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Eventos Sentidos", justify="left")
+        self.textopieza.grid(row=25, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Solucion Plano de Falla", justify="left")
+        self.textopieza.grid(row=26, column=4)
+	self.textopieza = Label(self.frameTwo, text = "", justify="left")
+        self.textopieza.grid(row=27, column=4)
+	self.textopieza = Label(self.frameTwo, text = "", justify="left")
+        self.textopieza.grid(row=28, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Gap Minimo", justify="left")
+        self.textopieza.grid(row=29, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Gap Maximo", justify="left")
+        self.textopieza.grid(row=30, column=4)
+	self.textopieza = Label(self.frameTwo, text = "Numero de Fases?", justify="left")
+        self.textopieza.grid(row=31, column=4)
+	
+
+
+
+
+	#self.E1 = Entry(self.frameTwo,width=14,textvariable=v1)
+        #self.E1.grid(row=1, column=2, padx=(0,10))
+
+	self.v1 = StringVar(self.frameTwo)
+	self.v1.set('OPERA')
+	self.v2 = StringVar(self.frameTwo)
+	self.v2.set('CAT')
+	self.v13 = StringVar(self.frameTwo)
+	self.v13.set('BDRSN')
+	self.v14 = StringVar(self.frameTwo)
+	self.v14.set('BDRSN')
+	self.v25 = StringVar(self.frameTwo)
+	self.v25.set('Ml')
+	self.v26 = StringVar(self.frameTwo)
+	self.v26.set('L')
+	self.v27 = StringVar(self.frameTwo)
+	self.v27.set('E')
+	
+	
+	self.O1 = OptionMenu(self.frameTwo,self.v1,'OPERA','SSMLG','BDRSN')
+	self.O1.grid(row=14, column=2, padx=(0,10))
+	self.O2 = OptionMenu(self.frameTwo,self.v2,'CAT','SFILES')
+	self.O2.grid(row=15, column=2, padx=(0,10))
+	
+	self.E3 = Entry(self.frameTwo,width=14,textvariable=self.v3)
+        self.E3.grid(row=16, column=2, padx=(0,10))
+	self.E4 = Entry(self.frameTwo,width=14,textvariable=self.v4)
+        self.E4.grid(row=17, column=2, padx=(0,10))
+
+	
+	self.E5 = Entry(self.frameTwo,width=14,textvariable=self.v5)
+        self.E5.grid(row=1, column=5, padx=(0,10))
+	self.E6 = Entry(self.frameTwo,width=14,textvariable=self.v6)
+        self.E6.grid(row=2, column=5, padx=(0,10))
+	self.E7 = Entry(self.frameTwo,width=14,textvariable=self.v7)
+	self.E7.grid(row=3, column=5, padx=(0,10))
+	self.E8 = Entry(self.frameTwo,width=14,textvariable=self.v8)
+        self.E8.grid(row=4, column=5, padx=(0,10))
+	self.E9 = Entry(self.frameTwo,width=14,textvariable=self.v9)
+        self.E9.grid(row=5, column=5, padx=(0,10))
+	self.E10 = Entry(self.frameTwo,width=14,textvariable=self.v10)
+        self.E10.grid(row=6, column=5, padx=(0,10))
+	self.E11 = Entry(self.frameTwo,width=14,textvariable=self.v11)
+        self.E11.grid(row=7, column=5, padx=(0,10))
+	self.E12 = Entry(self.frameTwo,width=14,textvariable=self.v12)
+        self.E12.grid(row=8, column=5, padx=(0,10))
+	
+	self.O3 = OptionMenu(self.frameTwo,self.v13,'RSNC','NEIC','FUNVISIS','IGEPN','EMSC')
+	self.O3.grid(row=9, column=5, padx=(0,10))
+	self.O4 = OptionMenu(self.frameTwo,self.v14,'RSNC','NEIC','FUNVISIS','IGEPN','EMSC')
+	self.O4.grid(row=10, column=5, padx=(0,10))
+	
+	self.E15 = Entry(self.frameTwo,width=14,textvariable=self.v15)
+        self.E15.grid(row=11, column=5, padx=(0,10))
+	self.E16 = Entry(self.frameTwo,width=14,textvariable=self.v16)
+        self.E16.grid(row=12, column=5, padx=(0,10))
+	self.E17 = Entry(self.frameTwo,width=14,textvariable=self.v17)
+        self.E17.grid(row=13, column=5, padx=(0,10))
+	self.E18 = Entry(self.frameTwo,width=14,textvariable=self.v18)
+        self.E18.grid(row=14, column=5, padx=(0,10))
+	self.E19 = Entry(self.frameTwo,width=14,textvariable=self.v19)
+        self.E19.grid(row=15, column=5, padx=(0,10))
+	self.E20 = Entry(self.frameTwo,width=14,textvariable=self.v20)
+        self.E20.grid(row=16, column=5, padx=(0,10))
+	self.E21 = Entry(self.frameTwo,width=14,textvariable=self.v21)
+        self.E21.grid(row=17, column=5, padx=(0,10))
+	self.E22 = Entry(self.frameTwo,width=14,textvariable=self.v22)
+        self.E22.grid(row=18, column=5, padx=(0,10))
+	self.E23 = Entry(self.frameTwo,width=14,textvariable=self.v23)
+        self.E23.grid(row=19, column=5, padx=(0,10))
+	self.E24 = Entry(self.frameTwo,width=14,textvariable=self.v24)
+        self.E24.grid(row=20, column=5, padx=(0,10))
+	
+	self.O5 = OptionMenu(self.frameTwo,self.v25,'Ml','Mw','Mb')
+	self.O5.grid(row=21, column=5, padx=(0,10))
+	self.O6 = OptionMenu(self.frameTwo,self.v26,'L','R','D')
+	self.O6.grid(row=22, column=5, padx=(0,10))
+	self.O7 = OptionMenu(self.frameTwo,self.v27,'E','V','P')
+	self.O7.grid(row=23, column=5, padx=(0,10))
+	
+	self.E28 = Entry(self.frameTwo,width=14,textvariable=self.v28)
+        self.E28.grid(row=24, column=5, padx=(0,10))
+	self.E29 = Entry(self.frameTwo,width=14,textvariable=self.v29)
+        self.E29.grid(row=25, column=5, padx=(0,10))
+	self.E30 = Entry(self.frameTwo,width=14,textvariable=self.v30)
+        self.E30.grid(row=26, column=5, padx=(0,10))
+	self.E31 = Entry(self.frameTwo,width=14,textvariable=self.v31)
+        self.E31.grid(row=27, column=5, padx=(0,10))
+	self.E32 = Entry(self.frameTwo,width=14,textvariable=self.v32)
+        self.E32.grid(row=28, column=5, padx=(0,10))
+	self.E33 = Entry(self.frameTwo,width=14,textvariable=self.v33)
+        self.E33.grid(row=29, column=5, padx=(0,10))
+	self.E34 = Entry(self.frameTwo,width=14,textvariable=self.v34)
+        self.E34.grid(row=30, column=5, padx=(0,10))
+	self.E35 = Entry(self.frameTwo,width=14,textvariable=self.v35)
+        self.E35.grid(row=31, column=5, padx=(0,10))
+	
+	#self.mostrar=Button(self.frameTwo, text='Mostrar', command=var_states)
+	#self.mostrar.grid(row=32, column=2, padx=(0,10))
+	#self.mainloop()
+	
+	
+	#print v1.get()
+	#print v2.get()
+	#print v3.get()
+	#print v4.get()
+
+################################Modificar Select.inp#################################
+	
+	def modificar():
+		parametros=glob(ruta+"select.inp")
+		#parametros=glob("/home/Cmunoz/read_select/codigo/select.inp")
+		archivo=open(parametros[0],"r")
+		print "Nombre del archivo : ", archivo.name
+		#print "Cerrado o no : ", archivo.closed
+		#print "Modo de apertura : ", archivo.mode
+		lines=archivo.readlines()
+		#print (lines[0])
+		contenido = ''
+		
+		for line in lines:
+			campos = line.split(":")
+			if 'Base or file name' in line:
+				if Var1.get() == 1:
+					#base_datos=raw_input('Base de datos?    ')
+					print self.v1.get()
+					contenido +=  ' Base or file name            : '+self.v1.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v1.set(campo[0:15].strip())
+					print self.v1.get()
+
+			elif 'Base type' in line:
+				if Var2.get() == 1:
+					#tipo=raw_input('Tipo?    ')
+					print self.v2.get()
+					contenido +=  ' Base type                    : '+self.v2.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v2.set(campo[0:15].strip())
+					print self.v2.get()
+
+			elif 'Start time' in line:
+				if self.Var3.get() == 1:
+					#t_ini=raw_input('Tiempo Inicial?    ')
+					print self.v3.get()
+					contenido +=  ' Start time                   : '+self.v3.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v3.set(campo[0:15].strip())	
+					print self.v3.get()
+
+			elif 'End time' in line:
+				if Var4.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v4.get()
+					contenido +=  ' End time                     : '+self.v4.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v4.set(campo[0:15].strip())	
+					print self.v4.get()
+	
+			elif 'Minimum number of stations' in line:
+				if Var5.get() == 1:
+					#base_datos=raw_input('Base de datos?    ')
+					print self.v5.get()
+					contenido +=  ' Minimum number of stations   :              '+self.v5.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v5.set(campo[0:15].strip())	
+					print self.v5.get()
+
+			elif 'Maximum number of stations' in line:
+				if Var6.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v6.get()
+					contenido +=  ' Maximum number of stations   :            '+self.v6.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v6.set(campo[0:15].strip())	
+					print self.v6.get()
+
+			elif 'Minimum latitude' in line:
+				if self.Var7.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')				
+					print self.v7.get()
+					contenido +=  ' Minimum latitude             :        '+self.v7.get()+'\n'
+				else:
+					contenido += line
+					#self.v7.delete(0, END)
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v7.set(campo[0:15].strip())	
+					print self.v7.get()
+
+			elif 'Maximum latitude' in line:
+				if self.Var8.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v8.get()
+					contenido +=  ' Maximum latitude             :         '+self.v8.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v8.set(campo[0:15].strip())	
+					print self.v8.get()
+
+			elif 'Minimum longitude' in line:
+				if self.Var9.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v9.get()
+					contenido +=  ' Minimum longitude            :       '+self.v9.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v9.set(campo[0:15].strip())	
+					print self.v9.get()
+
+			elif 'Maximum longitude' in line:
+				if self.Var10.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v10.get()
+					contenido +=  ' Maximum longitude            :        '+self.v10.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v10.set(campo[0:15].strip())	
+					print self.v10.get()
+
+			elif 'Minimum magnitude' in line:
+				if Var11.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v11.get()
+					contenido +=  ' Minimum magnitude            :       '+self.v11.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v11.set(campo[0:15].strip())	
+					print self.v11.get()
+
+			elif 'Maximum magnitude' in line:
+				if Var12.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v12.get()
+					contenido +=  ' Maximum magnitude            :        '+self.v12.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v12.set(campo[0:15].strip())	
+					print self.v12.get()
+
+			elif 'Magnitude agencies' in line:
+				if Var13.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v13.get()
+					contenido +=  ' Magnitude agencies           :                               '+self.v13.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v13.set(campo[0:15].strip())	
+					print self.v13.get()
+
+			elif 'Hypocenter agencies' in line:
+				if Var14.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v14.get()
+					contenido +=  ' Hypocenter agencies          :                               '+self.v14.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v14.set(campo[0:15].strip())	
+					print self.v14.get()
+					
+			elif 'Minimum rms' in line:
+				if Var15.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v15.get()
+					contenido +=  ' Minimum rms                  :          '+self.v15.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v15.set(campo[0:15].strip())	
+					print self.v15.get()
+			
+			elif 'Maximum rms' in line:
+				if Var16.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v16.get()
+					contenido +=  ' Maximum rms                  :        '+self.v16.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v16.set(campo[0:15].strip())	
+					print self.v16.get()
+
+			elif 'Minimum depth' in line:
+				if Var17.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v17.get()
+					contenido +=  ' Minimum depth                :        '+self.v17.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v17.set(campo[0:15].strip())	
+					print self.v17.get()
+			
+			elif 'Maximum depth' in line:
+				if Var18.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v18.get()
+					contenido +=  ' Maximum depth                :      '+self.v18.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v18.set(campo[0:15].strip())	
+					print self.v18.get()
+
+			elif 'Minimum error in latitude' in line:
+				if Var19.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v19.get()
+					contenido +=  ' Minimum error in latitude    :          '+self.v19.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v19.set(campo[0:15].strip())	
+					print self.v19.get()
+
+			elif 'Maximum error in latitude' in line:
+				if Var20.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v20.get()
+					contenido +=  ' Maximum error in latitude    :      '+self.v20.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v20.set(campo[0:15].strip())	
+					print self.v20.get()
+
+			elif 'Minimum error in longitude' in line:
+				if Var21.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v21.get()
+					contenido +=  ' Minimum error in longitude   :          '+self.v21.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v21.set(campo[0:15].strip())	
+					print self.v21.get()
+
+			elif 'Maximum error in longitude' in line:
+				if Var22.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v22.get()
+					contenido +=  ' Maximum error in longitude   :      '+self.v22.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v22.set(campo[0:15].strip())	
+					print self.v22.get()
+
+			elif 'Minimum error in depth' in line:
+				if Var23.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v23.get()
+					contenido +=  ' Minimum error in depth       :        '+self.v23.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v23.set(campo[0:15].strip())	
+					print self.v23.get()
+
+			elif 'Maximum error in depth' in line:
+				if Var24.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v24.get()
+					contenido +=  ' Maximum error in depth       :      '+self.v24.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v24.set(campo[0:15].strip())	
+					print self.v24.get()
+
+			elif 'Magnitude types (L,C,B,S,W)' in line:
+				if Var25.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v25.get()
+					contenido +=  ' Magnitude types (L,C,B,S,W)  :      '+self.v25.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v25.set(campo[0:15].strip())	
+					print self.v25.get()
+
+			elif 'Distance (ID) types (L,R,D)' in line:
+				if Var26.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v26.get()
+					contenido +=  ' Distance (ID) types (L,R,D)  :      '+self.v26.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v26.set(campo[0:15].strip())	
+					print self.v26.get()
+
+			elif 'Event types (e.g. E,V,P)' in line:
+				if Var27.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v27.get()
+					contenido +=  ' Event types (e.g. E,V,P)     :      '+self.v27.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v27.set(campo[0:15].strip())	
+					print self.v27.get()
+
+			elif 'Minimum number of polarities' in line:
+				if Var28.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v28.get()
+					contenido +=  ' Minimum number of polarities :              '+self.v28.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v28.set(campo[0:15].strip())	
+					print self.v28.get()
+
+			elif 'Felt earthquakes' in line:
+				if Var29.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v29.get()
+					contenido +=  ' Felt earthquakes             :              '+self.v29.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v29.set(campo[0:15].strip())	
+					print self.v29.get()
+
+			
+			elif 'Fault plane solution' in line:
+				if Var30.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v30.get()
+					contenido +=  ' Fault plane solution         :        '+self.v30.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v30.set(campo[0:15].strip())	
+					print self.v30.get()
+
+			elif 'Check all header lines' in line:
+				if Var31.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v31.get()
+					contenido +=  ' Check all header lines       :              '+self.v31.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v31.set(campo[0:15].strip())	
+					print self.v31.get()
+
+			elif 'Waveform files to check' in line:
+				if Var32.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v32.get()
+					contenido +=  ' Waveform files to check      :                                         '+self.v32.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v32.set(campo[0:15].strip())	
+					print self.v32.get()
+
+			elif 'Minimum gap' in line:
+				if Var33.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v33.get()
+					contenido +=  ' Minimum gap                  :          '+self.v33.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v33.set(campo[0:15].strip())	
+					print self.v33.get()
+
+			elif 'Maximum gap' in line:
+				if Var34.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v34.get()
+					contenido +=  ' Maximum gap                  :        '+self.v34.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v34.set(campo[0:15].strip())	
+					print self.v34.get()
+
+			elif 'Phases' in line:
+				if Var35.get() == 1:
+					#t_end=raw_input('Tiempo Final?    ')
+					print self.v35.get()
+					contenido +=  ' Phases                       :                         '+self.v35.get()+'\n'
+				else:
+					contenido += line
+					conteo = 0				
+					for campo in campos:
+						conteo +=1
+						if conteo == 2: 
+							self.v35.set(campo[0:15].strip())	
+					print self.v35.get()
+			else:
+				contenido += line
+				
+		archivo.close()
+		archivo=open(parametros[0],"w")
+		archivo.write(contenido)
+		archivo.close()
+
+	#os.system("/home/Cmunoz/read_select/mapas/mapa1/./mapa")
+
+	
+
+
+	self.mostrar=Button(self.frameTwo, text='Cargar Datos', command=modificar)
+	self.mostrar.grid(row=32, column=1, padx=(0,10))
+	
+	self.mostrar1=Button(self.frameTwo, text='Mostrar Cofiguracion', command=inp)
+	self.mostrar1.grid(row=32, column=3, padx=(0,10))
+	
+	self.mostrar2=Button(self.frameTwo, text='Select', command=select)
+	self.mostrar2.grid(row=32, column=2, padx=(0,10))
+
+	self.salir=Button(self.frameTwo, text='Menu', command=self.quit)
+	self.salir.grid(row=32, column=5, padx=(0,10))
+
+	#self.mainloop()
+	
+
+###############################PYTHON##########################################
+
+if __name__ == "__main__":
+    	root = Tk()
+    	aplicacion = Planificador(root)
+	root.mainloop()
+

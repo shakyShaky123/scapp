@@ -1,0 +1,2 @@
+Durante el mes de %s se registraron %s eventos, de los cuales: %s corresponden a eventos locales, %s a eventos regionales, %s a eventos en el Océano Pacífico, %s a eventos en el Mar Caribe y %s a eventos Volcánicos. De los eventos localizados, %s se determinaron como destacados, ver cuadro 3.1 y figura 3.1.
+Un evento es denominado como destacado si:

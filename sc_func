@@ -1,0 +1,547 @@
+#!/usr/bin/env python
+from Tkinter import *
+import tkFileDialog
+import datetime
+import tkMessageBox
+import Tkinter
+import sys
+import os
+import subprocess
+import os, time, math, tempfile
+import numpy 
+from glob import glob
+from time import *
+from datetime import *
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib import cm
+import time
+import pandas as pd
+import seaborn as sns
+from pylab import rcParams
+
+
+#ruta = "/home/camilo/Backup_208/camilo/read_select.208/V3_codigo/"
+#ruta = "/home/camilo/TEMP/scapp/"
+ruta = os.path.dirname(os.path.abspath(__file__))+"/"
+#ruta = "/home/camilo/scapp/"
+
+try:
+    import Gnuplot, Gnuplot.PlotItems, Gnuplot.funcutils
+except ImportError:
+    # kludge in case Gnuplot hasn't been installed as a module yet:
+    import __init__
+    Gnuplot = __init__
+    import PlotItems
+    Gnuplot.PlotItems = PlotItems
+    import funcutils
+    Gnuplot.funcutils = funcutils
+
+
+class Planificador(Frame):
+    def __init__(self,master):
+        Frame.__init__(self, master)
+        self.master = master
+        self.initUI()
+
+    def initUI(self):
+        self.master.title("Funcionamiento Estaciones")
+        self.frameOne = Frame(self.master)
+        self.frameOne.grid(row=0,column=0)
+
+	
+	self.funcionamiento()
+	
+############################Ventana Inicial####################################
+
+    def funcionamiento(self):
+
+	self.Var1,self.Var2,self.Var3,self.Var4,self.Var4_1,self.Var5,self.Var6,self.Var6_1 = IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar()
+
+	self.v1,self.v2,self.v3,self.v4,self.v5,self.v5_1,self.v6,self.v7,self.v8 = StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar()
+
+	self.v3.set('CM'), self.Var3.set('1'), self.v5.set('%Z'), self.v5_1.set('00,20,40'), self.Var6.set('1'), self.Var6_1.set('1')
+
+	self.v8 = StringVar()
+	self.v8.set('porc_fun.jpg')
+
+	self.texto = Label(self.frameOne, height='3', text = "FUNCIONAMIENTO ", justify="center")
+        self.texto.grid(row=0, column=3)
+
+
+	self.textopieza = Label(self.frameOne, text = "Fecha Inicial", justify="left")
+        self.textopieza.grid(row=1, column=1)
+	self.E3 = Entry(self.frameOne,width=14,textvariable=self.v1)
+        self.E3.grid(row=1, column=2, padx=(0,10))
+
+	self.textopieza = Label(self.frameOne, text = "Fecha Final", justify="left")
+        self.textopieza.grid(row=1, column=3)
+	self.E3 = Entry(self.frameOne,width=14,textvariable=self.v2)
+        self.E3.grid(row=1, column=4, padx=(0,10))
+
+	self.textopieza = Label(self.frameOne, text = "REDES", justify="left")
+        self.textopieza.grid(row=3, column=0)
+	self.E3 = Entry(self.frameOne,width=14,textvariable=self.v3)
+        self.E3.grid(row=3, column=1, padx=(0,10))
+
+	self.check = Checkbutton(self.frameOne, variable = self.Var1, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=3, column=2)
+	self.textopieza = Label(self.frameOne, text = "Todas las Redes", justify="left")
+        self.textopieza.grid(row=3, column=3)
+
+	self.check = Checkbutton(self.frameOne, variable = self.Var2, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=3, column=4)
+	self.textopieza = Label(self.frameOne, text = "Redes Internacionales", justify="left")
+        self.textopieza.grid(row=3, column=5)
+
+	self.textopieza = Label(self.frameOne, text = "Estaciones", justify="left")
+        self.textopieza.grid(row=4, column=0)
+	self.E3 = Entry(self.frameOne,width=56,textvariable=self.v4)
+        self.E3.grid(row=4, columnspan=5, padx=(0,10))
+
+	self.check = Checkbutton(self.frameOne, variable = self.Var3, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=4, column=4)
+	self.textopieza = Label(self.frameOne, text = "Todas las Estaciones", justify="left")
+        self.textopieza.grid(row=4, column=5)
+
+	self.textopieza = Label(self.frameOne, text = "Componentes", justify="left")
+        self.textopieza.grid(row=5, column=0)
+	self.E3 = Entry(self.frameOne,width=14,textvariable=self.v5)
+        self.E3.grid(row=5, column=1, padx=(0,10))
+
+	self.check = Checkbutton(self.frameOne, variable = self.Var4, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=5, column=2)
+	self.textopieza = Label(self.frameOne, text = "Todas las Componentes", justify="left")
+        self.textopieza.grid(row=5, column=3)
+
+
+	self.textopieza = Label(self.frameOne, text = "Codigo_Loc", justify="left")
+        self.textopieza.grid(row=6, column=0)
+	self.E3 = Entry(self.frameOne,width=14,textvariable=self.v5_1)
+        self.E3.grid(row=6, column=1, padx=(0,10))
+
+	self.check = Checkbutton(self.frameOne, variable = self.Var4_1, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=6, column=2)
+	self.textopieza = Label(self.frameOne, text = "Todos los codigos", justify="left")
+        self.textopieza.grid(row=6, column=3)
+
+
+
+
+
+	self.check = Checkbutton(self.frameOne, variable = self.Var5, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=10, column=2)
+	self.textopieza = Label(self.frameOne, text = "Rango Funcionamiento", justify="left")
+        self.textopieza.grid(row=10, column=3)
+
+	self.textopieza = Label(self.frameOne, text = "Limite Inferior", justify="left")
+        self.textopieza.grid(row=11, column=1)
+	self.E3 = Entry(self.frameOne,width=14,textvariable=self.v6)
+        self.E3.grid(row=11, column=2, padx=(0,10))
+
+	self.textopieza = Label(self.frameOne, text = "Limite Superior", justify="left")
+        self.textopieza.grid(row=11, column=3)
+	self.E3 = Entry(self.frameOne,width=14,textvariable=self.v7)
+        self.E3.grid(row=11, column=4, padx=(0,10))
+
+	self.check = Checkbutton(self.frameOne, variable = self.Var6, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=12, column=2)
+	self.textopieza = Label(self.frameOne, text = "Ignorar BH", justify="left")
+        self.textopieza.grid(row=12, column=3)
+
+	self.check = Checkbutton(self.frameOne, variable = self.Var6_1, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=13, column=2)
+	self.textopieza = Label(self.frameOne, text = "Ignorar Subredes", justify="left")
+        self.textopieza.grid(row=13, column=3)
+
+	self.textopieza = Label(self.frameOne, text = "Nombre Histograma", justify="left")
+        self.textopieza.grid(row=14, column=2)
+
+        self.E = Entry(self.frameOne,width=14,textvariable=self.v8)
+        self.E.grid(row=14, column=3, padx=(0,10))
+
+###########Logo###############################
+	self.c1 = Canvas(self.frameOne, width=150, height=60, bg='#DCDCDC')
+	self.ima1 = PhotoImage(file=ruta+'Logo-SGC3.gif')
+	self.c1.grid(row=0, column=0, rowspan = 4, sticky=W+N, pady=0)
+	self.c1.create_image((0,0), image=self.ima1,anchor=NW)
+
+
+
+
+################################Modificar search.py#################################
+
+	def modificar():
+		os.system("cp "+ruta+"funcionamiento/search_fun.py "+ruta)
+		archivo1=open(ruta+"search_fun.py","r")
+		print "Nombre del archivo : ", archivo1.name
+		lines = archivo1.readlines()
+		contenido1 = ''
+
+##############################################Redes###########################################
+		redes_all = str(self.v3.get())
+		redes = redes_all.split(",")
+		cont_redes = 0
+		cont_redes_ini = 0
+		line_redes = []
+		line_redes_txt = ""
+		for red in redes:
+			cont_redes_ini += 1
+		for red in redes:
+			if cont_redes_ini == 1:
+				line_redes.append("			AND (Network.code = '"+red+"') \\\n")
+			elif cont_redes == 0:
+				line_redes.append("			AND (Network.code = '"+red+"' \\\n")
+			elif cont_redes == cont_redes_ini-1:
+				line_redes.append("			OR Network.code = '"+red+"') \\\n")
+			else:
+				line_redes.append("			OR Network.code = '"+red+"' \\\n")
+			cont_redes += 1
+#		print line_redes
+		line_redes_txt = ''.join(line_redes)
+#		print line_redes_txt
+
+##############################################Estaciones###########################################
+		sta_all = str(self.v4.get())
+		stas = sta_all.split(",")
+		cont_sta = 0
+		cont_sta_ini = 0
+		line_sta = []
+		line_sta_txt = ""
+		for sta in stas:
+			cont_sta_ini += 1
+		for sta in stas:
+			if cont_sta_ini == 1:
+				line_sta.append("			AND (Station.code = '"+sta+"') \\\n")
+			elif cont_sta == 0:
+				line_sta.append("			AND (Station.code = '"+sta+"' \\\n")
+			elif cont_sta == cont_sta_ini-1:
+				line_sta.append("			OR Station.code = '"+sta+"') \\\n")
+			else:
+				line_sta.append("			OR Station.code = '"+sta+"' \\\n")
+			cont_sta += 1
+
+		line_sta_txt = ''.join(line_sta)
+
+##############################################Componentes###########################################
+		comp_all = str(self.v5.get())
+		comps = comp_all.split(",")
+		cont_comp = 0
+		cont_comp_ini = 0
+		line_comp = []
+		line_comp_txt = ""
+		for comp in comps:
+			cont_comp_ini += 1
+		for comp in comps:
+			if cont_comp_ini == 1:
+				line_comp.append("			AND (Stream.code LIKE '"+comp+"') \\\n")
+			elif cont_comp == 0:
+				line_comp.append("			AND (Stream.code LIKE '"+comp+"' \\\n")
+			elif cont_comp == cont_comp_ini-1:
+				line_comp.append("			OR Stream.code LIKE '"+comp+"') \\\n")
+			else:
+				line_comp.append("			OR Stream.code LIKE '"+comp+"' \\\n")
+			cont_comp += 1
+
+		line_comp_txt = ''.join(line_comp)
+
+##############################################location code###########################################
+		loc_all = str(self.v5_1.get())
+		locs = loc_all.split(",")
+		cont_loc = 0
+		cont_loc_ini = 0
+		line_loc = []
+		line_loc_txt = ""
+		for loc in locs:
+			cont_loc_ini += 1
+		for loc in locs:
+			if cont_loc_ini == 1:
+				line_loc.append("			AND (SensorLocation.code = '"+loc+"') \\\n")
+			elif cont_loc == 0:
+				line_loc.append("			AND (SensorLocation.code = '"+loc+"' \\\n")
+			elif cont_loc == cont_loc_ini-1:
+				line_loc.append("			OR SensorLocation.code = '"+loc+"') \\\n")
+			else:
+				print "\n Entra al else!"
+				line_loc.append("			OR SensorLocation.code = '"+loc+"' \\\n")
+			cont_loc += 1
+
+		line_loc_txt = ''.join(line_loc)
+
+
+###########################################Rescribiendo el search####################################
+		for line in lines:
+			if 'DiskAvailability.date' in line:
+				contenido1 += "			DiskAvailability.date BETWEEN '"+self.v1.get()+"' AND '"+self.v2.get()+"' \\\n"
+
+
+			elif 'AND Network.code =' in line:
+				if self.Var1.get() == 1:
+					contenido1 += line
+				elif self.Var2.get() == 1:
+					contenido1 += "			AND Network.code NOT LIKE 'CM' \\\n			AND Network.code NOT LIKE 'OM' \\\n			AND Network.code NOT LIKE 'OP' \\\n"
+				else:
+					contenido1 += line_redes_txt
+
+			elif 'AND Station.code =' in line:
+				if self.Var3.get() == 1:
+					contenido1 += line
+				else:
+					contenido1 += line_sta_txt
+
+			elif 'AND Stream.code LIKE' in line:
+				if self.Var4.get() == 1:
+					contenido1 += line
+				else:
+					contenido1 += line_comp_txt
+
+			elif "AND SensorLocation.code =" in line:
+				if self.Var4_1.get() == 1:
+					contenido1 += line
+				else:
+					contenido1 += line_loc_txt
+			else:
+				contenido1 += line
+
+
+		archivo1.close()
+		archivo1=open(ruta+"search_fun.py","w")
+		archivo1.write(contenido1)
+		archivo1.close()
+
+
+################################Hacer busqueda#################################
+
+	def run():
+		os.system(ruta+"./search_fun.py")
+
+################################Ver busqueda#################################
+
+	def see():
+		os.system("gedit sc_fun.out &")
+
+###############################BOTONES##########################################
+
+
+	self.mostrar=Button(self.frameOne, text='Cargar Datos', command=modificar)
+	self.mostrar.grid(row=9, column=0, padx=(0,10))
+
+	self.mostrar2=Button(self.frameOne, text='Hacer Busqueda', command=run)
+	self.mostrar2.grid(row=9, column=1, padx=(0,10))
+
+	self.mostrar2=Button(self.frameOne, text='Resultado Busqueda', command=see)
+	self.mostrar2.grid(row=9, column=2, padx=(0,10))
+
+
+###############################Despues de hacer la busqueda##################################
+
+	def modif():
+		archivo2=open("sc_fun.out","r")
+		lines = archivo2.readlines()
+		contenido2 = ''
+
+		if self.Var5.get() == 1:
+			for line in lines:
+				campos = line.split(',')
+				cont = 0
+				for campo in campos:
+					cont += 1
+					if cont == 5:
+						func = float(campo)
+						if func <= float(self.v7.get()):
+							if func >= float(self.v6.get()):
+								contenido2 += line
+			archivo2.close()
+			archivo2=open("sc_fun.out","w")
+			archivo2.write(contenido2)
+			archivo2.close()
+
+		archivo2=open("sc_fun.out","r")
+		lines = archivo2.readlines()
+		contenido2 = ''
+
+		if self.Var6.get() == 1:
+			for line in lines:
+				campos = line.split(',')
+				cont2 = 0
+				for campo in campos:
+					cont2 += 1
+					if cont2 == 4:
+						if str(campo[1:3]) != "'B":
+							contenido2 += line
+			archivo2.close()
+			archivo2=open("sc_fun.out","w")
+			archivo2.write(contenido2)
+			archivo2.close()
+
+		archivo3=open("sc_fun.out","r")
+		lines = archivo3.readlines()
+		contenido3 = ''
+
+		if self.Var6_1.get() == 1:
+			for line in lines:
+				campos = line.split(',')
+				cont3 = 0
+				cond = 0
+				for campo in campos:
+					cont3 += 1
+					if cont3 == 2:
+						if str(campo[1:6]) == "'AGCC":
+							cond = 1
+						if str(campo[1:5]) == "'ACH":
+							cond = 1
+						if str(campo[1:6]) == "'EZNC":
+							cond = 1
+						if str(campo[1:6]) == "'HI4C":
+							cond = 1
+						if str(campo[1:6]) == "'HI5C":
+							cond = 1
+						if str(campo[1:6]) == "'HI4C":
+							cond = 1
+						if str(campo[1:4]) == "'LL":
+							cond = 1
+						if str(campo[1:6]) == "'OCNC":
+							cond = 1
+						if str(campo[1:5]) == "'PGA":
+							cond = 1
+						if str(campo[1:7]) == "'SML1C":
+							cond = 1
+						if str(campo[1:7])== "'SNPBC":
+							cond = 1
+						if str(campo[1:5]) == "'VMM":
+							cond = 1
+						if str(campo[1:4]) == "'LL":
+							cond = 1
+				if cond == 0:
+					contenido3 += line
+			archivo3.close()
+			archivo3=open("sc_fun.out","w")
+			archivo3.write(contenido3)
+			archivo3.close()
+
+		os.system("gedit sc_fun.out &")
+
+
+###############################histogramas#########################################
+
+
+	def histo():
+
+		func_vec = []
+		comp_vec = []
+		sta_vec = []
+		contenido3 = ''
+		archivo2=open("sc_fun.out","r")
+		lines = archivo2.readlines()
+		for line in lines:
+			line2 = line.strip().strip("(").strip(")")
+			print line2
+			campos = line2.split(',')
+			campo2 = [campo.strip(" ").strip("\'") for campo in campos]
+			new_line = ",".join(campo2) 
+			contenido3 += new_line+"\n"
+			cont = 0
+			for campo in campos:
+				cont += 1
+				if cont == 5:
+					func_vec.append(float(campo))
+				if cont == 3:
+					comp_vec.append(campo.strip("\'"))
+					comp_temp = campo.strip().strip("\'")
+				if cont == 2:
+					sta_vec.append(campo.strip("\'"))
+					sta_temp = campo.strip().strip("\'")
+			#contenido3 += line.strip()+sta_temp+comp_temp+"\n"
+#		print func_vec
+		print len(func_vec)
+		
+		
+		
+		
+
+		archivo2.close()
+		archivo2=open("sc_fun2.out","w")
+		archivo2.write(contenido3)
+		archivo2.close()
+
+		w_graph = float(len(func_vec)*15)
+
+		sns.set(style="whitegrid")
+		# style="whitegrid"
+		df = pd.read_csv("sc_fun2.out", header=None, dtype=str)
+		df["station"] = df[1]+" "+df[2]
+		df[4] = df[4].astype(float)
+
+		# Initialize the matplotlib figure
+		f, ax = plt.subplots(figsize=(9, 13))
+
+		# Plot the total crashes
+		sns.set_color_codes("muted")
+		sns.barplot(x=4, y="station", data=df, color="yellowgreen")
+
+
+		# Add a informative axis label
+		ax.set_ylabel("Estaciones", weight='bold')
+		ax.set_xlabel("Porcentaje de Funcionamiento", weight='bold')
+		sns.despine(left=True, bottom=True)
+		plt.savefig('porc_fun.png')
+		plt.show()
+		"""
+		g = Gnuplot.Gnuplot()
+
+		g('set ylabel "Porcetaje Funcionamiento" rotate parallel ')
+		g('set xlabel "Estaciones"')
+		#g.title('Ocurrencia de Eventos por Meses')
+		g('set autoscale')
+		g('set terminal jpeg size '+str(w_graph)+',400 ')
+		g('unset pm3d')
+		g('set output "porc_fun.jpg"')
+		#if Var70.get() ==1:
+		#	g('set xrange ['+v76.get()+':'+v82.get()+']')
+		#	g('set yrange ['+v88.get()+':'+v94.get()+']')
+		g('unset key')
+		g('set boxwidth 0.8 relative')
+		g('set xtics rotate')
+		g('set style fill transparent solid 0.7 noborder')
+		g('set grid')
+		g('set xtics font ", 8"')
+		g('mylabel(col1,col2) = sprintf("%s %s",strcol(col1),strcol(col2))')
+		g('plot "sc_fun.out" u 5:xticlabels(mylabel(2,4)) with boxes lc rgb "#008a00"')
+		#raw_input('Please press return to continue...\n')
+		"""
+
+		print "Generando Histograma"
+
+		#time.sleep(5.5)    # pause 5.5 seconds
+
+		#os.system("display porc_fun.jpg &")
+
+###############################NOMBRE##########################################
+	def nombre():
+	   os.system("mv porc_fun.jpg "+str(self.v8.get()))
+	   print "Se guarda la grafica "+str(self.v8.get())
+
+
+###############################BOTONES##########################################
+
+	self.salir=Button(self.frameOne, text='Cambiar Nombre', command=nombre)
+	self.salir.grid(row=14, column=4, padx=(0,10))
+
+	self.mostrar2=Button(self.frameOne, text='Nuevo Resultado', command=modif)
+	self.mostrar2.grid(row=14, column=0, padx=(0,10))
+
+	self.mostrar2=Button(self.frameOne, text='Histograma', command=histo)
+	self.mostrar2.grid(row=14, column=1, padx=(0,10))
+
+	self.salir=Button(self.frameOne, text='Menu', command=self.quit)
+	self.salir.grid(row=14, column=5, padx=(0,10))
+
+
+
+
+###############################PYTHON##########################################
+
+if __name__ == "__main__":
+    	root = Tk()
+    	aplicacion = Planificador(root)
+	root.mainloop()

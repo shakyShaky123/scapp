@@ -1,0 +1,168 @@
+#!/usr/bin/env python
+from Tkinter import *
+import tkFileDialog
+import datetime
+import tkMessageBox
+import Tkinter
+import sys
+import os
+import subprocess
+import os, time, math, tempfile
+import numpy 
+from glob import glob
+from time import *
+from datetime import *
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib import cm
+
+try:
+    import Gnuplot, Gnuplot.PlotItems, Gnuplot.funcutils
+except ImportError:
+    # kludge in case Gnuplot hasn't been installed as a module yet:
+    import __init__
+    Gnuplot = __init__
+    import PlotItems
+    Gnuplot.PlotItems = PlotItems
+    import funcutils
+    Gnuplot.funcutils = funcutils
+
+ruta = "/Rutinas.Seiscomp/scapp/"
+
+class Planificador(Frame):
+    def __init__(self,master):
+        Frame.__init__(self, master)
+        self.master = master
+        self.initUI()
+
+    def initUI(self):
+        self.master.title("Aplicativo Solicitudes Internas RSNC")
+        self.frameOne = Frame(self.master)
+        self.frameOne.grid(row=0,column=0)
+        self.frameTwo = Frame(self.master)
+        self.frameTwo.grid(row=1, column=0)
+	self.frameThree = Frame(self.master)
+        self.frameThree.grid(row=3, column=0)
+	self.frameFour = Frame(self.master)
+        self.frameFour.grid(row=4, column=0)
+	
+	#parametros=glob("/home/Cmunoz/read_select/select.inp")
+	#archivo=open(parametros[0],"r")
+	##print "Nombre del archivo : ", archivo.name
+	##print "Cerrado o no : ", archivo.closed
+	##print "Modo de apertura : ", archivo.mode
+	#lines=archivo.readlines()
+	##print (lines[0])
+	#contenido = ''
+	
+	self.menu_inicial()
+	
+############################Ventana Inicial####################################
+
+    def menu_inicial(self):
+	
+	self.Var_V2_1=IntVar()
+
+	self.frameTwo.destroy()
+	self.frameThree.destroy()
+	self.frameFour.destroy()
+	self.frameOne=Toplevel()
+
+	self.select = Button(self.frameOne,text="Select SeisComP3",command=self.ir_select_sc,width=16)
+	self.select.grid(row=1, column=0, pady=(5,5))
+
+	self.select = Button(self.frameOne,text="Select SEISAN", command=self.ir_select,width=10)
+	self.select.grid(row=3, column=0, pady=(5,5))
+
+	self.mapas = Button(self.frameOne,text="REVISION", command=self.ir_rev, width=8)
+	self.mapas.grid(row=2, column=1, pady=(5,5))
+
+	self.mapas = Button(self.frameOne,text="MAPAS", command=self.ir_mapas, width=8)
+	self.mapas.grid(row=3, column=2, pady=(5,5))
+
+	self.graficas = Button(self.frameOne,text="GRAFICAS",command=self.ir_graficas, width=8)
+	self.graficas.grid(row=4, column=3, pady=(5,5))
+
+#	self.graficas = Button(self.frameOne,text="GRAFICAS_PYTHON",command=self.ir_graficas2, width=16)
+#	self.graficas.grid(row=4, column=2, pady=(5,5))
+
+	self.tablas = Button(self.frameOne,text="FUNCIONAMIENTO", command=self.ir_funcionamiento, width=14)
+	self.tablas.grid(row=5, column=4, pady=(5,5))
+
+	self.tablas = Button(self.frameOne,text="BOLETIN", command=self.ir_boletin, width=8)
+	self.tablas.grid(row=6, column=5, pady=(5,5))
+
+
+	self.salir2=Button(self.frameOne, text='Salir', command=self.quit)
+	self.salir2.grid(row=7, column=6, padx=(5,5))
+	   
+
+############Logo###############################
+	self.c1 = Canvas(self.frameOne, width=150, height=60, bg='#DCDCDC')
+	self.ima1 = PhotoImage(file=ruta+'Logo-SGC3.gif')
+	self.c1.grid(row=4, column=1, rowspan = 4, sticky=N, pady=25)
+	self.c1.create_image((0,0), image=self.ima1,anchor=NW)
+
+############texto1###############################
+	self.c2 = Canvas(self.frameOne, width=200, height=100, bg='#DCDCDC')
+	self.ima2 = PhotoImage(file=ruta+'texto1.gif')
+	self.c2.grid(row=1, column=4, rowspan = 5, columnspan = 5, sticky=W+N, pady=2)
+	self.c2.create_image((0,0), image=self.ima2,anchor=NW)
+############texto3###############################
+	self.c3 = Canvas(self.frameOne, width=600, height=20, bg='#DCDCDC')
+	self.ima3 = PhotoImage(file=ruta+'texto2.gif')
+	self.c3.grid(row=7, column=0, rowspan = 1, columnspan = 5, sticky=S, pady=0)
+	self.c3.create_image((0,0), image=self.ima3,anchor=NW)
+
+
+	
+
+    #def aceptar_piezas(self):
+    #    try:
+    #        val = int(self.entrypiezas.get())
+    #        self.aceptar_piezas_ok()
+    #    except ValueError:
+    #        showerror('Error', "Introduce un numero")
+##########################################NUEVO SELECT SeisComP3#################################
+
+    def ir_select_sc(self):
+	os.system("sc_select")
+
+##########################################NUEVO SELECT Seisan#################################
+
+    def ir_select(self):
+	os.system("sei_select")
+
+########################################## Revision #################################
+
+    def ir_rev(self):
+	os.system("app_rev")
+
+
+########################################## Mapas #################################
+
+    def ir_mapas(self):
+	os.system("app_maps")
+
+########################################## Graficas #################################
+
+    def ir_graficas(self):
+	os.system("app_graphs")
+
+########################################## Funcionamiento #################################
+
+    def ir_funcionamiento(self):
+	os.system("sc_func")
+
+
+########################################## Boletin #################################
+
+    def ir_boletin(self):
+	os.system("sc_bullet")
+
+######################################################################################
+
+if __name__ == "__main__":
+    	root = Tk()
+    	aplicacion = Planificador(root)
+	root.mainloop()

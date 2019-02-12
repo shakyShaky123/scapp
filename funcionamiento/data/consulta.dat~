@@ -1,0 +1,9 @@
+Select Network.code as red,Station.code as estacion,SensorLocation.code as localizador,
+round(avg(DiskAvailability.availability),0) as disponibilidad FROM  
+Network left join Station on Network._oid=Station._parent_oid left join 
+SensorLocation on Station._oid=SensorLocation._parent_oid left  join 
+Stream on SensorLocation._oid=Stream._parent_oid inner join 
+DiskAvailability on Stream._oid = DiskAvailability.stream_oid 
+where DiskAvailability.date like '2017-12%' 
+group by Station.code,SensorLocation.code  
+order by  Network.code,Station.code asc;

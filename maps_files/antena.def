@@ -1,0 +1,12 @@
+#    $Id: antena.def,v 1.0 2012/03/29 16:27:00 jfblanco
+#
+#    Definition file for a antenna symbol
+#    To be used with psxy as -Santenna/<size>.
+#    The symbol will be painted and drawn given the
+#    -G -L -W options on the psxy command line.
+0    0.5    M
+0.25    0.25     0.625     135     315     A
+0.25    0.25     0.625     315     135     A
+0.25    0.25     -45         0.6   0.3         e
+0      -0.2     0.5   t
+0.25    0.25    0.2   t

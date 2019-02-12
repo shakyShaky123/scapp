@@ -1,0 +1,5 @@
+-68.2 -3.9 5 0 1 5   Estaciones
+-68.1 -4.2 5 0 0 5   Banda Ancha
+-68.1 -4.5 5 0 0 5   Corto Periodo
+-68.1 -4.8 5 0 0 5   Internacionales
+

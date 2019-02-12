@@ -1,0 +1,1103 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# #############################################################################
+# Aplicativo para hacer graficas desde SC3 y Seisan.
+# 
+# Camilo Muñoz
+# cmunozl@sgc.gov.co
+#
+# Ultima modificacion 08/2018
+#
+# #############################################################################
+
+from Tkinter import *
+import tkFileDialog
+import datetime
+import tkMessageBox
+import Tkinter
+import sys
+import os
+import subprocess
+import os, time, math, tempfile
+import numpy 
+from glob import glob
+from time import *
+from datetime import *
+import time
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib import cm
+
+try:
+	# con seaborn instalado el histograma queda mas bonito
+	import seaborn as sns  
+	sns.set()
+except:
+	pass
+
+
+#ruta = "/home/camilo/Backup_208/camilo/read_select.208/V3_codigo/"
+#ruta = "/home/camilo/TEMP/scapp/"
+#ruta = "/home/camilo/scapp/"
+ruta = "/Rutinas.Seiscomp/scapp/"
+
+
+try:
+    import Gnuplot, Gnuplot.PlotItems, Gnuplot.funcutils
+except ImportError:
+    # kludge in case Gnuplot hasn't been installed as a module yet:
+    import __init__
+    Gnuplot = __init__
+    import PlotItems
+    Gnuplot.PlotItems = PlotItems
+    import funcutils
+    Gnuplot.funcutils = funcutils
+
+class Planificador(Frame):
+    def __init__(self,master):
+        Frame.__init__(self, master)
+        self.master = master
+        self.initUI()
+
+    def initUI(self):
+        self.master.title("Graficas")
+        self.frameOne = Frame(self.master)
+        self.frameOne.grid(row=0,column=0)
+        self.frameFour = Frame(self.master)
+        self.frameFour.grid(row=1, column=0)
+	
+	#parametros=glob("/home/Cmunoz/read_select/select.inp")
+	#archivo=open(parametros[0],"r")
+	##print "Nombre del archivo : ", archivo.name
+	##print "Cerrado o no : ", archivo.closed
+	##print "Modo de apertura : ", archivo.mode
+	#lines=archivo.readlines()
+	##print (lines[0])
+	#contenido = ''
+	
+	self.menu_inicial()
+	
+
+
+####################################################################################
+################################GRAFICAS################################################
+#####################################################################################
+###############################GNUPLOT##########################################
+
+
+############################Ventana Inicial####################################
+
+    def menu_inicial(self):
+
+	
+	self.Var_V2_1=IntVar()
+	self.Var_V2_2=IntVar()
+
+	self.frameFour.destroy()
+	self.frameOne=Toplevel()
+	self.select = Button(self.frameOne,text="Graficas", command=self.ir_graficas,width=18)
+	self.select.grid(row=1, column=0, pady=(5,5))
+	
+	self.textopieza = Label(self.frameOne, text = "Desde SeisComp3", justify="left")
+        self.textopieza.grid(row=3, column=0)
+
+	self.check = Checkbutton(self.frameOne, variable = self.Var_V2_1, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=3, column=1)
+
+	self.textopieza = Label(self.frameOne, text = "Desde SEISAN", justify="left")
+        self.textopieza.grid(row=4, column=0)
+	self.check = Checkbutton(self.frameOne, variable = self.Var_V2_2, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=4, column=1)
+
+	self.salir2=Button(self.frameOne, text='Menu', command=self.quit)
+	self.salir2.grid(row=5, column=4, padx=(5,5))
+	   
+   
+
+####################################################################################################################
+
+    def ir_graficas(self):
+	self.frameOne.destroy()
+	self.frameFour=Toplevel()
+	#######################hace el report1################################
+	if self.Var_V2_2.get() == 1:
+		os.system(ruta+"./expect_report")
+		os.system("mv report.out report2.out")
+		#######################borra la primera linea del report################################	
+		#report1=glob("report2.out")
+		archivo3=open("report2.out","r")
+		lines=archivo3.readlines()
+		contenido3 = ''
+		for line in lines:
+			if 'Latitud' in line:
+				contenido3 += ''
+			else:
+				contenido3 += line
+		archivo3.close()
+		archivo3=open("report2.out","w")
+		archivo3.write(contenido3)
+		archivo3.close()
+
+	if self.Var_V2_1.get() == 1:
+		os.system(ruta+"./sc_graph.py")
+
+
+###########Leer lat lon date_ini date_end desde archivos del select######################
+
+	minlat = str(-5)
+	maxlat = str(13)
+	minlon = str(-79)
+	maxlon = str(-66)
+	date_ini = str(19930101000000)
+	date_end = str(20171231235959)
+
+	if self.Var_V2_2.get() == 1:
+		archivo_inp = open('select.inp','r')
+		lines = archivo_inp.readlines()
+		for line in lines:
+			cont_inp = 0
+			campos = line.split(":")
+			for campo in campos:
+				cont_inp += 1
+				if cont_inp == 2:
+					if "Start time" == str(line[1:11]):
+						date_ini = int(campo)
+					if "End time" == str(line[1:9]):
+						date_end = int(campo)
+					if "Minimum latitude" == str(line[1:17]):
+						minlat = float(campo)
+					elif "Maximum latitude" == str(line[1:17]):
+						maxlat = float(campo)
+					elif "Minimum longitude" == str(line[1:18]):
+						minlon = float(campo)
+					elif "Maximum longitude" == str(line[1:18]):
+						maxlon = float(campo)
+		archivo_inp.close
+
+	elif self.Var_V2_1.get() == 1:
+		archivo_inp = open(ruta+'search.py','r')
+		lines = archivo_inp.readlines()
+		for line in lines:
+			campos = line.split(" ")
+			cont_inp = 0
+			for campo in campos:
+				cont_inp += 1
+				if cont_inp == 4:
+					if "Origin.time_value" == str(line[7:24]):
+						date_ini = campo[1:14]
+				if cont_inp == 6:
+					if "Origin.time_value" == str(line[7:24]):
+						date_end = campo[1:14]
+				if cont_inp == 4:
+					if "ROUND(Origin.latitude_value" == str(line[7:34]):
+						minlat = float(campo)
+				if cont_inp == 6:
+					if "ROUND(Origin.latitude_value" == str(line[7:34]):
+						maxlat = float(campo)
+				if cont_inp == 4:
+					if "ROUND(Origin.longitude_value" == str(line[7:35]):
+						minlon = float(campo)
+				if cont_inp == 6:
+					if "ROUND(Origin.longitude_value" == str(line[7:35]):
+						maxlon = float(campo)
+		archivo_inp.close
+
+	date_ini = str(date_ini)
+	date_end = str(date_end)
+#	print date_ini
+#	print date_end
+
+
+######################## MENU ELEGIBLE#######################################
+
+	v52,v53,v54,v55,v56,v57,v58,v59,v60,v61,v62,v63,v64,v65,v66,v67,v68,v69,v70,v71,v72,v73,v74,v75,v76,v77,v78,v79,v80,v81,v82,v83,v84,v85,v86,v87,v88,v89,v90,v91,v92,v93,v94,v95,v96,v97,v98,v99,v100,v101,v102,v103,v104,v105,v106,v107,v108,v109,v110,v111 = StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar()
+
+
+
+	Var52,Var53,Var54,Var55,Var56,Var57,Var58,Var58a,Var59,Var59a,Var60,Var61,Var62,Var63,Var64,Var65,Var66,Var67,Var68,Var69,Var70,Var71,Var72,Var73,Var74,Var75 = IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar()
+	Var55.set('1'),Var56.set('1'),Var57.set('1'),Var58a.set('1'),Var59.set('1'),Var59a.set('1')
+
+################### Texto #########################
+
+	self.texto = Label(self.frameFour, height='3', text = "GRAFICAS", justify="center")
+        self.texto.grid(row=0, column=2, sticky=N)
+	self.texto = Label(self.frameFour, height='3', text = "Rangos de los Ejes", justify="center")
+        self.texto.grid(row=2, column=3, columnspan = 4)
+	self.texto = Label(self.frameFour, height='3', text = "Xmin", justify="center")
+        self.texto.grid(row=3, column=3)
+        self.texto = Label(self.frameFour, height='3', text = "Xmax", justify="center")
+        self.texto.grid(row=3, column=4)
+	self.texto = Label(self.frameFour, height='3', text = "Ymin", justify="center")
+        self.texto.grid(row=3, column=5)
+        self.texto = Label(self.frameFour, height='3', text = "Ymax", justify="center")
+        self.texto.grid(row=3, column=6)
+
+
+################### Lat-vs-Error #########################
+
+	self.check = Checkbutton(self.frameFour, variable=Var52, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=4, column=0)
+	self.texto = Label(self.frameFour, height='3', text = "Latitud vs Error", justify="center")
+        self.texto.grid(row=4, column=1)
+	self.check = Checkbutton(self.frameFour, variable=Var64, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=4, column=2)
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v52)
+        self.E39.grid(row=4, column=3, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v58)
+        self.E39.grid(row=4, column=4, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v64)
+        self.E39.grid(row=4, column=5, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v70)
+        self.E39.grid(row=4, column=6, padx=(0,10))
+
+#################### Lon-vs-Error #########################
+
+	self.check = Checkbutton(self.frameFour, variable=Var53, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=5, column=0)
+	self.texto = Label(self.frameFour, height='3', text = "Longitud vs Error", justify="center")
+        self.texto.grid(row=5, column=1)
+	self.check = Checkbutton(self.frameFour, variable=Var65, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=5, column=2)
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v53)
+        self.E39.grid(row=5, column=3, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v59)
+        self.E39.grid(row=5, column=4, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v65)
+        self.E39.grid(row=5, column=5, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v71)
+        self.E39.grid(row=5, column=6, padx=(0,10))
+
+##################### Prof-vs_Error #########################
+
+	self.check = Checkbutton(self.frameFour, variable=Var54, onvalue =1, offvalue = 0, height=1, width = 5) 
+	self.check.grid(row=6, column=0)
+	self.texto = Label(self.frameFour, height='3', text = "Profundidad vs Error", justify="center")
+        self.texto.grid(row=6, column=1)
+	self.check = Checkbutton(self.frameFour, variable=Var66, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=6, column=2)
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v54)
+        self.E39.grid(row=6, column=3, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v60)
+        self.E39.grid(row=6, column=4, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v66)
+        self.E39.grid(row=6, column=5, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v72)
+        self.E39.grid(row=6, column=6, padx=(0,10))
+
+
+###################### Prof-vs-No-Sismos #####################
+
+	self.check = Checkbutton(self.frameFour, variable=Var55, onvalue =1, offvalue = 0, height=1, width = 5) 
+	self.check.grid(row=7, column=0)
+	self.texto = Label(self.frameFour, height='3', text = "Profundidad vs No de Sismos", justify="center")
+        self.texto.grid(row=7, column=1)
+	self.check = Checkbutton(self.frameFour, variable=Var67, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=7, column=2)
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v55)
+        self.E39.grid(row=7, column=3, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v61)
+        self.E39.grid(row=7, column=4, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v67)
+        self.E39.grid(row=7, column=5, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v73)
+        self.E39.grid(row=7, column=6, padx=(0,10))
+
+
+####################### RMS-vs-No-Sismos #####################
+
+	self.check = Checkbutton(self.frameFour, variable=Var56, onvalue =1, offvalue = 0, height=1, width = 5) 
+	self.check.grid(row=8, column=0)
+	self.texto = Label(self.frameFour, height='3', text = "RMS vs No de Sismos", justify="center")
+        self.texto.grid(row=8, column=1)
+	self.check = Checkbutton(self.frameFour, variable=Var68, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=8, column=2)
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v56)
+        self.E39.grid(row=8, column=3, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v62)
+        self.E39.grid(row=8, column=4, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v68)
+        self.E39.grid(row=8, column=5, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v74)
+        self.E39.grid(row=8, column=6, padx=(0,10))
+
+######################## Ml-vs-No-Sismos #####################
+
+	self.check = Checkbutton(self.frameFour, variable=Var57, onvalue =1, offvalue = 0, height=1, width = 5) # Ml-vs-No-Sismos
+	self.check.grid(row=9, column=0)
+	self.texto = Label(self.frameFour, height='3', text = "Ml vs No de Sismos", justify="center")
+        self.texto.grid(row=9, column=1)
+	self.check = Checkbutton(self.frameFour, variable=Var69, onvalue =1, offvalue = 0, height=1, width = 5)
+	self.check.grid(row=9, column=2)
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v57)
+        self.E39.grid(row=9, column=3, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v63)
+        self.E39.grid(row=9, column=4, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v69)
+        self.E39.grid(row=9, column=5, padx=(0,10))
+	self.E39 = Entry(self.frameFour,width=4,textvariable=v75)
+        self.E39.grid(row=9, column=6, padx=(0,10))
+
+
+
+################## Otras graficas ####################################3
+	self.check = Checkbutton(self.frameFour, variable=Var58a, onvalue =1, offvalue = 0, height=1, width = 5) # Error-No-sismos
+	self.check.grid(row=10, column=0)
+	self.texto = Label(self.frameFour, height='3', text = "Errores vs No Sismos", justify="center")
+        self.texto.grid(row=10, column=1)
+
+	self.check = Checkbutton(self.frameFour, variable=Var58, onvalue =1, offvalue = 0, height=1, width = 5) # No-Sismos-vs-Meses
+	self.check.grid(row=11, column=0)
+	self.texto = Label(self.frameFour, height='3', text = "No Sismos vs Meses", justify="center")
+        self.texto.grid(row=11, column=1)
+
+	self.check = Checkbutton(self.frameFour, variable=Var59, onvalue =1, offvalue = 0, height=1, width = 5) # No-Sismos-vs-Dias
+	self.check.grid(row=12, column=0)
+	self.texto = Label(self.frameFour, height='3', text = "No Sismos vs Dias", justify="center")
+        self.texto.grid(row=12, column=1)
+	
+	self.check = Checkbutton(self.frameFour, variable=Var59a, onvalue =1, offvalue = 0, height=1, width = 5) # No-Sismos-vs-Dias-acumulado
+	self.check.grid(row=13, column=0)
+	self.texto = Label(self.frameFour, height='3', text = "No Sismos vs Dias Acumulado", justify="center")
+        self.texto.grid(row=13, column=1)
+
+
+	self.check = Checkbutton(self.frameFour, variable=Var61, onvalue =1, offvalue = 0, height=1, width = 5) # No-Sismos-vs-RMS-Prufunidad
+	self.check.grid(row=10, column=2)
+	self.texto = Label(self.frameFour, height='3', text = "No Sismos vs RMS-Profundidad", justify="center")
+        self.texto.grid(row=10, column=3, columnspan = 3)
+
+	self.check = Checkbutton(self.frameFour, variable=Var62, onvalue =1, offvalue = 0, height=1, width = 5) # No-Sismos-vs-Ml-Profundidad
+	self.check.grid(row=11, column=2)
+	self.texto = Label(self.frameFour, height='3', text = "No Sismos vs Ml-Profundidad", justify="center")
+        self.texto.grid(row=11, column=3, columnspan = 3)
+
+	self.check = Checkbutton(self.frameFour, variable=Var63, onvalue =1, offvalue = 0, height=1, width = 5) # No-Sismos-vs-rms-Ml
+	self.check.grid(row=12, column=2)
+	self.texto = Label(self.frameFour, height='3', text = "No Sismos vs RMS-Ml", justify="center")
+        self.texto.grid(row=12, column=3, columnspan = 3)
+
+############Linea###############################
+
+	self.c1 = Canvas(self.frameFour, width=5, height=300, bg='#DCDCDC')
+	self.c1.grid(row=10, column=2, rowspan = 4, sticky=W)
+	self.c1.create_line(3, 3, 3, 300,width=1)
+
+	self.c3 = Canvas(self.frameFour, width=100, height=5, bg='#DCDCDC')
+	self.c3.grid(row=0, column=2, rowspan = 3, sticky=N, pady=32)
+	self.c3.create_line(3, 3, 100, 3,width=2)
+
+
+############Logo###############################
+	self.c2 = Canvas(self.frameFour, width=150, height=60, bg='#DCDCDC')
+	self.ima1 = PhotoImage(file=ruta+'Logo-SGC3.gif')
+	self.c2.grid(row=1, column=1, rowspan = 4, sticky=N)
+	self.c2.create_image((0,0), image=self.ima1,anchor=NW)
+
+
+###################################Codigo Graficas################################
+	def codigo_graficas():
+
+		if self.Var_V2_2.get() == 1:
+			archivo4=open("report2.out","r")
+			name = archivo4.name
+		if self.Var_V2_1.get() == 1:
+			archivo4=open("graph_sc.out","r")
+			name = archivo4.name
+		lines=archivo4.readlines()
+		#print (lines[0])
+
+		vec_prof = numpy.arange(0,800,5)
+		vec_rms = numpy.arange(0.1,5.0,0.1)
+		vec_mag = numpy.arange(0,10.0,0.1)
+
+		########################### # sismos vs prof, rms, mag#######################
+		contador = 0		
+		prof = []
+		rms = []
+		mag = []
+		error_lat = []
+		error_lon = []
+		error_prof = []
+		
+		for line in lines:
+			#campo = line.split(' ')
+			if self.Var_V2_2.get() == 1:
+				try:
+					prof.append(float(line[30:35]))
+					rms.append(float(line[43:46]))
+					mag.append(float(line[48:51]))
+				except:
+					print "Error en el sismo "+line
+			if self.Var_V2_1.get() == 1:
+				campos = line.split(" ")
+				cont = 0
+				for campo in campos:
+					cont += 1
+					try:
+						if cont == 18:
+							prof.append(float(campo))
+						if cont == 26:
+							rms.append(float(campo))
+						if cont == 30:
+							mag.append(float(campo))
+						if cont == 6:
+							error_lat.append(float(campo))
+						if cont == 14:
+							error_lon.append(float(campo))
+						if cont == 22:
+							error_prof.append(float(campo))
+					except:
+						print "Error en el sismo "+line
+
+		if Var55.get() ==1:
+			plt.figure()
+			plt.hist([prof], label=["Profundidad"])
+			plt.title(u"Histograma Valores de Profundidad")
+			plt.xlabel("Profundidad [km]")
+			plt.ylabel(u'Número de sismos')
+			plt.legend();
+			plt.savefig("prof_sismos.png")
+
+		if Var56.get() ==1:
+			plt.figure()
+			plt.hist([rms], label=["RMS"])
+			plt.title(u"Histograma Valores de RMS")
+			plt.xlabel("RMS")
+			plt.ylabel(u'Número de sismos')
+			plt.legend();
+			plt.savefig("rms_sismos.png")
+
+		if Var57.get() ==1:
+			plt.figure()
+			plt.hist([mag], label=["Magnitud"])
+			plt.title(u"Histograma Valores de Magnitud")
+			plt.xlabel("Magnitud")
+			plt.ylabel(u'Número de sismos')
+			plt.legend();
+			plt.savefig("mag_sismos.png")
+
+		if Var58a.get() ==1:
+			plt.figure()
+			plt.hist([error_lat, error_lon, error_prof], label=["Latitud", "Longitud", "Profundidad"])
+			plt.title(u"Errores En Localización")
+			plt.xlabel("Error (km)")
+			plt.ylabel(u'Número de sismos')
+			plt.legend();
+			plt.savefig("loc_err.png")
+
+
+
+		##############################Prueba con Bins histogramas 2D#####
+		###MAGNITUD RMS#####		
+	
+		vec_prof2 = numpy.arange(0,210,10)
+		vec_rms2 = numpy.arange(0.1,2.2,0.1)
+		vec_mag2 = numpy.arange(0,10.5,0.5)		
+		
+
+		if Var63.get()==1:
+			plt.figure()
+			hist, bins_mag1, bins_rms1 = numpy.histogram2d(mag, rms, (vec_mag2, vec_rms2))
+			hist = numpy.rot90(hist)
+			hist = numpy.flipud(hist)	
+			fig = plt.figure(figsize=(10, 10))
+			ax = fig.add_subplot(111)
+			#ax.set_title('NonUniformImage: interpolated')
+			#im = mpl.image.NonUniformImage(ax, interpolation='bilinear', cmap=cm.terrain)
+			im = mpl.image.NonUniformImage(ax, interpolation='bilinear')		
+			xcenters = bins_mag1[:-1] + 0.5 * (bins_mag1[1:] - bins_mag1[:-1])
+			ycenters = bins_rms1[:-1] + 0.5 * (bins_rms1[1:] - bins_rms1[:-1])
+			im.set_data(xcenters, ycenters, hist)
+			ax.images.append(im)
+			ax.set_xlim(bins_mag1[0], bins_mag1[-1])
+			ax.set_ylim(bins_rms1[0], bins_rms1[-1])
+			cbar = fig.colorbar(im)
+			cbar.ax.set_ylabel('Numero De Sismos')
+			#ax.set_aspect('equal')
+			ax.set_xlabel('Magnitud')
+			ax.set_ylabel('RMS')
+			plt.savefig('mag_rms_sismos.png')
+
+
+		##############################PROFUNDIDAD RMS##########################	
+		
+		if Var61.get()==1:
+			plt.figure()
+			hist2, bins_prof1, bins_rms2 = numpy.histogram2d(prof, rms, (vec_prof2, vec_rms2))
+			hist2 = numpy.rot90(hist2)
+			hist2 = numpy.flipud(hist2)	
+			fig2 = plt.figure(figsize=(10, 10))
+			ax2 = fig2.add_subplot(111)
+			#ax.set_title('NonUniformImage: interpolated')
+			im2 = mpl.image.NonUniformImage(ax2, interpolation='bilinear')
+			xcenters2 = bins_prof1[:-1] + 0.5 * (bins_prof1[1:] - bins_prof1[:-1])
+			ycenters2 = bins_rms2[:-1] + 0.5 * (bins_rms2[1:] - bins_rms2[:-1])
+			im2.set_data(xcenters2, ycenters2, hist2)
+			ax2.images.append(im2)
+			ax2.set_xlim(bins_prof1[0], bins_prof1[-1])
+			ax2.set_ylim(bins_rms2[0], bins_rms2[-1])
+			cbar2 = fig2.colorbar(im2)
+			cbar2.ax.set_ylabel('Numero De Sismos')
+			#ax2.set_aspect('equal')
+			ax2.set_xlabel('Profundidad')
+			ax2.set_ylabel('RMS')
+			plt.savefig('prof_rms_sismos.png')
+			#plt.show()
+
+		#####################PROFUNDIDAD MAGNITUD###############################
+	
+		
+		if Var62.get()==1:
+			plt.figure()
+			hist3, bins_prof2, bins_mag2 = numpy.histogram2d(prof, mag, (vec_prof2, vec_mag2))
+			hist3 = numpy.rot90(hist3)
+			hist3 = numpy.flipud(hist3)	
+			fig3 = plt.figure(figsize=(10, 10))
+			ax3 = fig3.add_subplot(111)
+			#ax.set_title('NonUniformImage: interpolated')
+			im3 = mpl.image.NonUniformImage(ax3, interpolation='bilinear')
+			xcenters3 = bins_prof2[:-1] + 0.5 * (bins_prof2[1:] - bins_prof2[:-1])
+			ycenters3 = bins_mag2[:-1] + 0.5 * (bins_mag2[1:] - bins_mag2[:-1])
+			im3.set_data(xcenters3, ycenters3, hist3)
+			ax3.images.append(im3)
+			ax3.set_xlim(bins_prof2[0], bins_prof2[-1])
+			ax3.set_ylim(bins_mag2[0], bins_mag2[-1])
+			cbar3 = fig3.colorbar(im3)
+			cbar3.ax.set_ylabel('Numero De Sismos')
+			#ax.set_aspect('equal')
+			ax3.set_xlabel('Profundidad')
+			ax3.set_ylabel('Magnitud')
+			plt.savefig('prof_mag_sismos.png')
+			#plt.show()
+
+		########################
+		g = Gnuplot.Gnuplot()
+		#########################Grafias 2D Localizacion vs Errores#########
+#		r1 = 0
+#		r2 = 0
+#		r3 = 0
+#		if float(self.v8.get()) != 90:
+#			if float(self.v7.get()) != -90:
+#				r1=(abs(float(self.v8.get()) - float(self.v7.get())))/60 #abs(latmax - latmin)/10
+#		else:
+#			r1=abs(12.0-(-1.0))/60.0
+#			print r1
+#		if float(self.v10.get()) != 360:
+#			if float(self.v9.get()) != -360:
+#				r2=(abs(float(self.v10.get()) - float(self.v9.get())))/60 #abs(lonmax - lonmin)/10
+#		else:
+#			r2=abs(82.0-70.0)/60.0
+#			print r2
+#		
+
+#		if float(self.v18.get()) !=  99999:
+#			if float(self.v9.get()) != -99:
+#				r3 = abs(float(self.v18.get()) - float(self.v17.get()))/60 #abs(profmax - profmin)/60
+#	 	else:
+#			r3 = 200.0/60.0
+#			print r3
+
+		if Var52.get() ==1:
+			g('set autoscale')
+			g.title('LATITUD VS ERROR EN LATITUD')
+			g('set terminal jpeg')
+			g('set output "late.jpg"')
+			g('set style fill transparent solid 0.5 border lc rgb "black"')
+			g.xlabel('LATITUD (Grados)')
+			g.ylabel('ERROR (km)')
+			if Var64.get() ==1:
+				g('set xrange ['+v52.get()+':'+v58.get()+']')
+				g('set yrange ['+v64.get()+':'+v70.get()+']')
+			
+			g('unset key')
+			g('set grid')
+			g('plot "'+name+'" u 1:2 with circles lc rgb "gray"' )
+			#raw_input('Please press return to continue...\n')
+		if Var53.get() ==1:
+			g('set autoscale')
+			g.title('LONGITUD VS ERROR EN LONGITUD')
+			g('set terminal jpeg')
+			g('set output "lone.jpg"')
+			g('set style fill transparent solid 0.5 border lc rgb "black"')
+			g.xlabel('LONGITUD (Grados)')
+			g.ylabel('ERROR (km)')
+			if Var65.get() ==1:
+				g('set xrange ['+v53.get()+':'+v59.get()+']')
+				g('set yrange ['+v65.get()+':'+v71.get()+']')
+			g('unset key')
+			g('set grid')
+			g('plot "'+name+'" u 3:4 with circles lc rgb "blue"')
+			#raw_input('Please press return to continue...\n')
+		if Var54.get() ==1:
+			g('set autoscale')
+			g.title('PROFUNDIDAD VS ERROR EN PROFUNDIDAD')
+			g('set terminal jpeg')
+			g('set output "profe.jpg"')
+			g('set style fill transparent solid 0.2 border lc rgb "black"')
+			if Var66.get() ==1:
+				g('set xrange ['+v54.get()+':'+v60.get()+']')
+				g('set yrange ['+v66.get()+':'+v72.get()+']')
+			g('set grid')
+			g('unset key')
+			#g('set xrange [-10:200]')
+			g.xlabel('PROFUNDIDAD (km)')
+			g.ylabel('ERROR (km)')
+			g('plot "'+name+'" u 5:6 with circles lc rgb "red"')
+			#raw_input('Please press return to continue...\n')
+				
+		archivo4.close()
+		
+
+		############################Grafica Sismos-Tiempo###################
+
+		if self.Var_V2_2.get() == 1:## SEISAN
+			os.system(ruta+"./expect_report2")
+			#######################borra la primera linea del report################################	
+			#report2=glob("report.out")
+			archivo5=open("report.out","r")
+			lines=archivo5.readlines()
+			contenido5 = ''
+			for line in lines:
+				if 'Year' in line:
+					contenido5 += ''
+				else:
+					contenido5 += line
+			archivo5.close()
+			archivo5=open("report.out","w")
+			archivo5.write(contenido5)
+			archivo5.close()
+		if self.Var_V2_1.get() == 1:## SEISCOMP
+			os.system(ruta+"./sc_time.py")
+
+################################leo archiovos de salida#########################################################
+		#dat1=glob("appear_mes.dat")
+		archivo1=open("appear_mes.dat","w")
+		contenido1 = ''
+		#dat2=glob("appear_dias.dat")
+		archivo2=open("appear_dias.dat","w")
+		contenido2 = ''
+		#dat3=glob("appear_dias_sum.dat")
+		archivo3=open("appear_dias_sum.dat","w")
+		contenido3 = ''
+
+#############################leo el report solo con date, time del select.out##########################
+		if self.Var_V2_2.get() == 1:## SEISAN
+			#report3=glob("report.out")
+			archivo6=open("report.out","r")
+			lines=archivo6.readlines()
+
+		if self.Var_V2_1.get() == 1:## SEISCOMP
+			#report3=glob("time_sc.out")
+			archivo6=open("time_sc.out","r")
+			lines=archivo6.readlines()
+
+################################creo vectores para los anos, meses, dias###################
+		vec_years = numpy.arange(1993,2019,1) ##OJO!!! toca modificar cada ano, para el 2019 cambiar a 2020
+		#print vec_years
+		count_mes=numpy.zeros((26, 12)) ## OJO!!! toca modificar cada ano sumar al primer numero uno, siguiente 27 para el 2019
+		count_dia=numpy.zeros((26, 12, 31)) ## OJO!!! toca modificar cada ano sumar al primer numero uno, siguiente 27 para el 2019
+		#print count_mes
+		meses=numpy.arange(1,14,1)
+		size = numpy.zeros((2))
+
+		year = []
+		mes = []
+		dia = []
+		appear_year = []
+		appear_count_mes = []
+		appear_count_mes2 = []
+		appear_mes = []
+		appear_mes2 = []
+		appear_count_dia = []
+		appear_count_dia2 = []
+		appear_count_dia3 = []
+		
+		appear_dia = []
+		appear_dia2 = []
+		appear_dia3 = []
+		appear_count_dia_sum = 0
+		#appear_count_dia_sum = []
+		appear_count_dia_sum2 = []
+###################################Leo del report.out los meses, anos y dia#########################################3###
+		for line in lines:
+			campo = line.split(' ')
+			if self.Var_V2_2.get() == 1:## SEISAN
+				year.append(int(line[1:5]))
+				mes.append(int(line[6:8]))
+				if int(line[8:10]) == 1:
+					dia.append('01')
+				elif int(line[8:10]) == 2:
+					dia.append('02')
+				elif int(line[8:10]) == 3:
+					dia.append('03')
+				elif int(line[8:10]) == 4:
+					dia.append('04')
+				elif int(line[8:10]) == 5:
+					dia.append('05')
+				elif int(line[8:10]) == 6:
+					dia.append('06')
+				elif int(line[8:10]) == 7:
+					dia.append('07')
+				elif int(line[8:10]) == 8:
+					dia.append('08')
+				elif int(line[8:10]) == 9:
+					dia.append('09')
+				else:
+					dia.append(int(line[8:10]))
+			if self.Var_V2_1.get() == 1:## SEISCOMP
+				year.append(int(line[1:5]))
+				mes.append(int(line[6:8]))
+				dia.append(str(line[9:11]))
+
+
+		#print year.buffer_info()
+		#print mes.buffer_info()
+		#print dia.buffer_info()
+		#print len (year)
+###################################Sumo uno por uno los meses que aparecen en el report.out#######################
+		for i in range (0, len(mes)):
+			for y in range (0, 26):## OJO!!! toca modificar cada ano sumar al primer numero uno, siguiente 27 para el 2019
+#				print year[i]
+#				print vec_years[y]
+				if year[i]==vec_years[y]:
+					#appear_year.append(year[i])
+					for j in range (0, 13):
+						if mes[i]-1==int(j):
+							count_mes[y,j] += 1 
+							if year[i] == year[i-1]:
+								if mes[i] != mes[i-1]:
+									appear_mes.append(' '+str(year[i])+'-'+str(mes[i])+' ')
+################################### Si hay cambio de ano el mes se coloca sin importar el valor del mes anterior. ##################################################
+							if year[i] != year[i-1]:
+								appear_mes.append(' '+str(year[i])+'-'+str(mes[i])+' ')				
+		size=count_mes.shape
+###############################Quito los ceros del vector de meses############################################
+		for i in range (0, size[0]):
+			for j in range (0, size[1]):
+				if count_mes[i,j] != 0:
+					appear_count_mes.append(count_mes[i,j])
+###################################Si solo hay un mes lo pongo manualmente##############################################
+		if len(appear_count_mes) == 1:
+			appear_mes.append(' '+str(year[0])+'-'+str(mes[0])+' ')
+					
+##################################Convierto en str los vecores#####################################
+		print len(appear_count_mes)
+		print len(appear_mes)
+			
+		for i in range (0, len(appear_count_mes)):
+			appear_count_mes2 = str(appear_count_mes[i])
+			appear_mes2 = str(appear_mes[i])
+			#print appear_count_mes2 
+			contenido1 += ''+appear_count_mes2+' '+appear_mes2+'\n'
+		
+		
+
+
+		archivo1.close()
+		archivo1=open("appear_mes.dat","w")
+		archivo1.write(contenido1)
+		archivo1.close()
+		
+		
+#####################################Sumo uno por uno los dia que aparecen en el report.out##################
+		for i in range (0, len(dia)):
+			for y in range (0, 26):## OJO!!! toca modificar cada ano sumar al primer numero uno, siguiente 27 para el 2019
+				if year[i]==vec_years[y]:
+				#appear_year.append(year[i])
+					for j in range (0, 13):
+						if mes[i]-1==int(j):
+							for k in range (0,32):
+								if int(dia[i])-1==int(k):
+									count_dia[y,j,k] += 1	
+									if year[i] == year[i-1]:
+										if mes[i] == mes[i-1]:
+											if int(dia[i]) != int(dia[i-1]):
+												if len(str(mes[i])) == 1:
+													if len(str(dia[i])) == 1:
+														appear_dia.append(str(year[i])+'-'+'0'+str(mes[i])+'-'+'0'+str(dia[i]))
+													else:
+														appear_dia.append(str(year[i])+'-'+'0'+str(mes[i])+'-'+str(dia[i]))
+												else:
+													appear_dia.append(str(year[i])+'-'+str(mes[i])+'-'+str(dia[i]) )									
+############### Si hay cambio de mes o de ano el dia se pone sin importar el dia anterior ##################################################
+										if mes[i] != mes[i-1]:
+											if len(str(mes[i])) == 1:
+												if len(str(dia[i])) == 1:
+													appear_dia.append(str(year[i])+'-'+'0'+str(mes[i])+'-'+'0'+str(dia[i]))
+												else:
+													appear_dia.append(str(year[i])+'-'+'0'+str(mes[i])+'-'+str(dia[i]))
+											else:
+												appear_dia.append(str(year[i])+'-'+str(mes[i])+'-'+str(dia[i]))									
+									if year[i] != year[i-1]:
+										if len(str(mes[i])) == 1:
+											if len(str(dia[i])) == 1:
+												appear_dia.append(str(year[i])+'-'+'0'+str(mes[i])+'-'+'0'+str(dia[i]))
+											else:
+												appear_dia.append(str(year[i])+'-'+'0'+str(mes[i])+'-'+str(dia[i]))
+										else:
+											appear_dia.append(str(year[i])+'-'+str(mes[i])+'-'+str(dia[i]))									
+		size=count_dia.shape
+		#print size
+##################Quito los ceros de la matriz de dia#########################################
+		for i in range (0, size[0]):
+			for j in range (0, size[1]):
+				for k in range (0, size[2]):
+					if count_dia[i,j,k] != 0:
+						appear_count_dia.append(count_dia[i,j,k])
+
+##################Convierto en str los vecores###########################
+		#print len(appear_count_dia)
+		#print len(appear_dia)
+		for i in range (0, len(appear_count_dia)):
+			appear_count_dia2 = str(appear_count_dia[i])
+			appear_dia2 = str(appear_dia[i])
+			#print appear_count_dia2 
+			#contenido2 += ''+appear_count_dia2+' '+appear_dia2+'\n'
+			appear_dia3.append(appear_dia2)
+			appear_count_dia3.append(appear_count_dia2)
+################################Valores acumulados por dia#############################
+			appear_count_dia_sum += appear_count_dia[i]
+			#print appear_count_dia[i]
+			#print appear_count_dia_sum
+			appear_count_dia_sum2 = str(appear_count_dia_sum)
+			contenido3 += ''+appear_count_dia_sum2+' '+appear_dia2+'\n'
+			
+			
+		#print appear_count_dia
+		
+		#print len(appear_count_dia)
+		#print len(dia)
+
+##########################agragando los dias que no tienen sismos##############################################
+		p1 = str(date_ini)
+		p0 = str(date_end)
+		#print p1
+		#print p0
+		y_p1=p1[0:4]
+		m_p1=p1[4:6]
+		if m_p1 == '':
+			m_p1 = '01'
+		d_p1=p1[6:8]
+		if d_p1 == '':
+			d_p1 = '01'
+
+
+
+		y_p0=p0[0:4]
+		m_p0=p0[4:6]
+		if m_p0 == '':
+			m_p0 = '12'
+		d_p0=p0[6:8]
+		if d_p0 == '':
+			if m_p0 == '01':
+				d_p0 = '31'
+			elif m_p0 == '02':
+				d_p0 = '28'
+			elif m_p0 == '03':
+				d_p0 = '31'
+			elif m_p0 == '04':
+				d_p0 = '30'
+			elif m_p0 == '05':
+				d_p0 = '30'
+			elif m_p0 == '06':
+				d_p0 = '30'
+			elif m_p0 == '07':
+				d_p0 = '31'
+			elif m_p0 == '08':
+				d_p0 = '31'
+			elif m_p0 == '09':
+				d_p0 = '30'
+			elif m_p0 == '10':
+				d_p0 = '31'
+			elif m_p0 == '11':
+				d_p0 = '30'
+			elif m_p0 == '12':
+				d_p0 = '31'
+			else:
+				print 'error en el mes'
+
+		#print y_p1
+		#print m_p1
+		#print d_p1
+
+		#print y_p0
+		#print m_p0
+		#print d_p0
+
+		d0 = date(int(y_p0),int(m_p0),int(d_p0))
+		d1 = date(int(y_p1),int(m_p1),int(d_p1))
+		diff = d0 - d1
+		#print  diff.days
+
+		lista = []
+		delta = timedelta(days=1)
+		lista.append(str(d1))
+		for i in range(0, int(diff.days)):	
+			d3 = d1 + delta
+			if d3 < d0:
+				lista.append(str(d3))
+			d1 = d3
+		lista.append(str(d0))
+		#print lista
+		
+		#print lista
+		#print appear_dia3
+		#print len(lista)
+		#print len(appear_dia3)
+		
+		appear_count_dia4 = numpy.zeros((len(lista)))
+		
+		for i in range (0, len(lista)):
+			for j in range (0, len(appear_dia3)):
+				#print lista[i]
+				#print appear_dia3[j]
+				#print appear_count_dia3[j]
+				#print lista[i]
+				#print appear_dia3[j]
+				if lista[i]==appear_dia3[j]:
+					appear_count_dia4[i]=appear_count_dia3[j]
+		#print appear_count_dia4
+		#print appear_count_dia3
+		for i in range (0, len(lista)):
+			contenido2 += ''+str(appear_count_dia4[i])+' '+str(lista[i])+'\n'
+
+		archivo3.close()
+		archivo3=open("appear_dias_sum.dat","w")
+		archivo3.write(contenido3)
+		archivo3.close()
+		
+		archivo2.close()
+		archivo2=open("appear_dias.dat","w")
+		archivo2.write(contenido2)
+		archivo2.close()
+
+#####################################Se hacen los histogramas#####################################################
+
+		w=diff.days*20
+		#print diff.days
+		#print w
+		
+		if Var58.get() ==1:
+			g('set ylabel "Numero de sismos" rotate parallel ')
+			g('set xlabel "Tiempo en Meses"')
+			g.title('Ocurrencia de Eventos por Meses')
+			g('set autoscale')
+			g('set terminal jpeg')
+			g('unset pm3d')
+			g('set output "sismos_vs_tiempo_meses.jpg"')
+#			if Var70.get() ==1:
+#				g('set xrange ['+v76.get()+':'+v82.get()+']')
+#				g('set yrange ['+v88.get()+':'+v94.get()+']')
+			g('unset key')
+			g('set boxwidth 0.9 relative')
+			g('set xtics rotate')
+			g('set style fill solid 1')
+			g('set grid')
+			g('plot "appear_mes.dat" u 1:xticlabels(2) with boxes, "" using 0:($1+$1/50):1 w labels font ",8"')
+			#raw_input('Please press return to continue...\n')
+		
+		if Var59.get() ==1:
+			g('set ylabel "Numero de sismos" rotate parallel ')
+			g('set xlabel "Tiempo en Dias"')
+			g.title('Ocurrencia de Eventos por Dias')
+			g('set autoscale')
+			#g('set terminal jpeg')
+			g('set term jpeg size '+str(w)+', 400')
+			g('unset pm3d')
+			g('set output "sismos_vs_tiempo_dias.jpg"')
+#			if Var71.get() ==1:
+#				g('set xrange ['+v77.get()+':'+v83.get()+']')
+#				g('set yrange ['+v89.get()+':'+v95.get()+']')
+			g('unset key')
+			g('set boxwidth 0.7 relative')
+			#g('set size 4,1')
+			g('set xtics rotate')
+			g('set style fill solid 1')
+			g('set grid')
+			g('plot "appear_dias.dat" u 1:xticlabels(2) with boxes, "" using 0:($1+$1/10):1 w labels font ",6"')
+			#raw_input('Please press return to continue...\n')
+			
+		if Var59a.get() ==1:
+			g('set ylabel "Numero de Sismos Acumulado" rotate parallel ')
+			g('set xlabel "Tiempo en Dias"')
+			g.title('Eventos Acumulados')
+			g('set autoscale')
+			#g('set terminal jpeg')
+			g('set term jpeg size '+str(w)+', 400')
+			g('unset pm3d')
+			g('set output "sismos_vs_tiempo_dias_acumulado.jpg"')
+			#if Var71.get() ==1:
+			#	g('set xrange ['+v77.get()+':'+v83.get()+']')
+			#	g('set yrange ['+v89.get()+':'+v95.get()+']')
+			g('unset key')
+			g('set boxwidth 0.7 relative')
+			#g('set size 4,1')
+			g('set xtics rotate')
+			g('set style fill solid 1')
+			g('set grid')
+			g('plot "appear_dias_sum.dat" u 1:xticlabels(2) with boxes')
+			#raw_input('Please press return to continue...\n')
+
+		archivo6.close()
+	
+		time.sleep(0.5)
+		os.system("mkdir data_graphs")
+		os.system("mv appear_dias.dat appear_dias_sum.dat appear_mes.dat data_graphs")
+
+		############################ Menu Graficas ##########################
+	def ver_graficas():
+	
+		#os.system("rm -f *.jpg")
+		
+		if Var52.get() ==1:
+			os.system("display late.jpg")
+		if Var53.get() ==1:
+			os.system("display lone.jpg")
+		if Var54.get() ==1:
+			os.system("display profe.jpg")
+		if Var58a.get() ==1:
+			os.system("display loc_err.png")
+		if Var55.get() ==1:
+			os.system("display prof_sismos.png")
+		if Var56.get() ==1:
+			os.system("display rms_sismos.png")
+		if Var57.get() ==1:
+			os.system("display mag_sismos.png")
+		if Var58.get() ==1:
+			os.system("display sismos_vs_tiempo_meses.jpg")
+		if Var59.get() ==1:
+			os.system("display sismos_vs_tiempo_dias.jpg")
+		if Var59a.get() ==1:
+			os.system("display sismos_vs_tiempo_dias_acumulado.jpg")
+		if Var61.get() ==1:
+			os.system("display prof_rms_sismos.png")
+		if Var62.get() ==1:
+			os.system("display prof_mag_sismos.png")
+		if Var63.get() ==1:
+			os.system("display mag_rms_sismos.png")
+
+########################BOTONES############################################3
+
+	self.menu=Button(self.frameFour, text='Hacer Graficas', command=codigo_graficas)
+	self.menu.grid(row=14, column=0, padx=(0,10))
+	self.menu=Button(self.frameFour, text='Ver Graficas', command=ver_graficas)
+	self.menu.grid(row=14, column=1, padx=(0,10))
+	self.menu=Button(self.frameFour, text='Menu', command=self.menu_inicial)
+	self.menu.grid(row=14, column=2, padx=(0,10))
+	self.salir=Button(self.frameFour, text='Salir', command=self.quit)
+	self.salir.grid(row=14, column=8, padx=(0,10))
+
+###############################PYTHON##########################################
+    def ir_graficas2(self):
+    	os.system(ruta+"./histo_graf.py")
+	
+
+
+######################################################################################
+
+if __name__ == "__main__":
+    	root = Tk()
+    	aplicacion = Planificador(root)
+	root.mainloop()
+
