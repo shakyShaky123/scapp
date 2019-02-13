@@ -327,9 +327,9 @@ def seismicity(doc, year1, month1, t, lc, reg, pac, car, volc, imp,
 				
 		data_list = sc_table("sc_destacados.out")
 		
-		with doc.create(LongTabu("X[1.3,c] X[1.2,c] X[c] X[1.1,c] X[0.4,c] X[0.4,c] X[4,l]",
+		with doc.create(LongTabu("X[0.4,c] X[1.3,c] X[1.2,c] X[c] X[1.1,c] X[0.4,c] X[0.4,c] X[4,l]",
 							 row_height=1)) as data_table:          
-		  data_table.add_row(NoEscape(r"\scriptsize\sffamily\bfseries FECHA"),
+		  data_table.add_row(NoEscape(r"\scriptsize\sffamily\bfseries N"), NoEscape(r"\scriptsize\sffamily\bfseries FECHA"),
 							NoEscape(r"\scriptsize\sffamily\bfseries H:M:S"),
 							NoEscape(r"\scriptsize\sffamily\bfseries LAT"),
 							NoEscape(r"\scriptsize\sffamily\bfseries LON"), 
@@ -343,13 +343,13 @@ def seismicity(doc, year1, month1, t, lc, reg, pac, car, volc, imp,
 		  # para cada elemento en la lista list_to_table (lista con info de destacados)
 		  for i in range(len(data_list)):
 			if (i % 2) == 0:
-				data_table.add_row(Command("tiny",data_list[i][0]),
+				data_table.add_row(Command("tiny", str(i+1)),Command("tiny",data_list[i][0]),
 						   Command("tiny",data_list[i][1]),Command("tiny",data_list[i][2]),
 						   Command("tiny",data_list[i][3]),Command("tiny",data_list[i][4]),
 						   Command("tiny",data_list[i][5]),
 						   Command("tiny",data_list[i][6]), color="sgc2!20")
 			else:
-				data_table.add_row(Command("tiny",data_list[i][0]),
+				data_table.add_row(Command("tiny", str(i+1)),Command("tiny",data_list[i][0]),
 						   Command("tiny",data_list[i][1]),Command("tiny",data_list[i][2]),
 						   Command("tiny",data_list[i][3]),Command("tiny",data_list[i][4]),
 						   Command("tiny",data_list[i][5]),
@@ -388,9 +388,9 @@ def seismicity(doc, year1, month1, t, lc, reg, pac, car, volc, imp,
 		doc.append(NoEscape(r"\section{Tabla de sismicidad mensual %s de %s}"%(month1, year1)))
 		doc.append(NoEscape(r"\vspace{0.8cm}"))
 		data_list = sc_table("sc_mensual.out")
-		with doc.create(LongTabu("X[1.3,c] X[1.2,c] X[c] X[1.1,c] X[0.4,c] X[0.4,c] X[4,l]",
+		with doc.create(LongTabu("X[0.4,c] X[1.3,c] X[1.2,c] X[c] X[1.1,c] X[0.4,c] X[0.4,c] X[4,l]",
 							 row_height=1)) as data_table:          
-		  data_table.add_row(NoEscape(r"\scriptsize\sffamily\bfseries FECHA"),
+		  data_table.add_row(NoEscape(r"\scriptsize\sffamily\bfseries N"),NoEscape(r"\scriptsize\sffamily\bfseries FECHA"),
 							NoEscape(r"\scriptsize\sffamily\bfseries H:M:S"),
 							NoEscape(r"\scriptsize\sffamily\bfseries LAT"),
 							NoEscape(r"\scriptsize\sffamily\bfseries LON"), 
@@ -404,13 +404,13 @@ def seismicity(doc, year1, month1, t, lc, reg, pac, car, volc, imp,
 		  # para cada elemento en la lista list_to_table (lista con info de destacados)
 		  for i in range(len(data_list)):
 			if (i % 2) == 0:
-				data_table.add_row(Command("tiny",data_list[i][0]),
+				data_table.add_row(Command("tiny", str(i+1)),Command("tiny",data_list[i][0]),
 						   Command("tiny",data_list[i][1]),Command("tiny",data_list[i][2]),
 						   Command("tiny",data_list[i][3]),Command("tiny",data_list[i][4]),
 						   Command("tiny",data_list[i][5]),
 						   Command("tiny",data_list[i][6]), color="sgc2!20")
 			else:
-				data_table.add_row(Command("tiny",data_list[i][0]),
+				data_table.add_row(Command("tiny", str(i+1)),Command("tiny",data_list[i][0]),
 						   Command("tiny",data_list[i][1]),Command("tiny",data_list[i][2]),
 						   Command("tiny",data_list[i][3]),Command("tiny",data_list[i][4]),
 						   Command("tiny",data_list[i][5]),

@@ -3,9 +3,9 @@
 import MySQLdb
 
 
-db = MySQLdb.connect(host="10.100.100.232",    # your host, usually localhost
-                     user="consulta",         # your username
-                     passwd="consulta",  # your password
+db = MySQLdb.connect(host='10.100.100.13',    # your host, usually localhost
+                     user='consulta',         # your username
+                     passwd='consulta',  # your password
                      db="seiscomp3")        # name of the data base
 cur = db.cursor()
 
@@ -47,7 +47,7 @@ cur.execute("\
 			/*AND FeltReport.report NOT LIKE '' */\
 			/*AND Comment._parent_oid = Event._oid */\
 			/*AND Comment.text LIKE '%DESTACADO%' */\
-			AND Origin.time_value BETWEEN '20181001' AND '20181101000000'\
+			AND Origin.time_value BETWEEN '20190126000000' AND '20190201235959'\
 			/*AND ROUND(Origin.latitude_value,2) BETWEEN 7.0 AND 8.0 */\
 			/*AND ROUND(Origin.longitude_value,2) BETWEEN -82.0 AND -81.0 */\
 			/*AND Origin.depth_value BETWEEN 0 AND 10 */\
@@ -61,7 +61,7 @@ cur.execute("\
 			/*AND ROUND(Origin.quality_azimuthalGap,2) BETWEEN 0.00 AND 360.00 */\
 			/*AND ROUND(Origin.quality_minimumDistance,2) BETWEEN 0.00 AND 10.00 */\
 			/*AND Magnitude.type='MLv' */\
-			/*AND Origin.evaluationMode='automatic' */\
+			AND Origin.evaluationMode='manual' \
 			/*AND Origin.creationInfo_agencyID='SGC' */\
 			/*AND Origin.creationInfo_author='scanloc' */\
 			AND (Event.type NOT IN ('not locatable', 'explosion', 'not existing', 'outside of network interest') OR Event.type IS NULL)\
@@ -75,17 +75,17 @@ for fila in cur.fetchall():
 	i+=1 
 	#print fila
 
-archivo1=open('sc_report.out',"w")
+archivo1=open('sc_report.out','w')
 archivo1.write(contenido1.decode('iso-8859-1').encode('UTF-8', 'strict'))
 
 cur.close()
 db.close()
 
 
-#SERVIDOR,232
+#SERVIDOR,13
 #BUSQUEDA,Eventos
-#TIME_INI,20181001
-#TIME_END,20181101000000
+#TIME_INI,20190126000000
+#TIME_END,20190201235959
 #LAT_MIN,
 #LAT_MAX,
 #LON_MIN,
@@ -111,7 +111,7 @@ db.close()
 #DIST_STA_MIN,
 #DIST_STA_MAX,
 #MAG_TYPE,
-#ESTATUS,
+#ESTATUS,manual
 #AGENCIA,
 #AUTOR,
 #TIPO,
